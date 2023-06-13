@@ -1,5 +1,3 @@
-package com.example.backendglobaldirectory.service;
-
 import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.Roles;
@@ -26,6 +24,16 @@ public class UserService {
     @PostConstruct
     public void initPasswordEncoder() {
 //        passwordEncoder = new BCryptPasswordEncoder();
+    }
+  
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = this.userRepository.getUserByEmail(email);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("Not found!");
+        }
+        return new MyUserDetails(user);
     }
 
     public ResponseEntity<ResponseDTO> performRegister(RegisterDTO registerDTO)
@@ -75,5 +83,3 @@ public class UserService {
                 HttpStatus.OK
         );
     }
-
-}
