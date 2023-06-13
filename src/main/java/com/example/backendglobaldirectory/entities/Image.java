@@ -16,16 +16,18 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
     private String type;
 
-    @Column(length = 10000000)
-    private byte[] picBytes;
+    @Lob
+    @Column(name = "image_encoded")
+    private String imageEncoded;
 
-    public Image(String name, String type, byte[] picBytes) {
+    public Image(String name, String type, String imageEncoded) {
         this.name = name;
         this.type = type;
-        this.picBytes = picBytes;
+        this.imageEncoded = imageEncoded;
     }
 
 }

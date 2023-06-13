@@ -14,11 +14,13 @@ public class RegisterDTO {
 
     private String lastName;
 
-    private LocalDateTime dateOfEmployment;
+    private String dateOfEmployment;
 
     private String jobTitle;
 
     private String team;
 
     private String department;
+
+    private ImageDTO image;
 }
