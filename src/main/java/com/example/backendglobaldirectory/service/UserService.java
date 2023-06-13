@@ -3,11 +3,13 @@ package com.example.backendglobaldirectory.service;
 import com.example.backendglobaldirectory.dto.MyUserDetails;
 import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
+import com.example.backendglobaldirectory.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,13 +62,25 @@ public class UserService implements UserDetailsService {
 
         newUser.setFirstName(registerDTO.getFirstName());
         newUser.setLastName(registerDTO.getLastName());
-        newUser.setDateOfEmployment(registerDTO.getDateOfEmployment());
+
+        newUser.setDateOfEmployment(Utils.convertDateStringToLocalDateTime(
+                registerDTO.getDateOfEmployment())
+        );
+
         newUser.setJobTitle(registerDTO.getJobTitle());
         newUser.setTeam(registerDTO.getTeam());
         newUser.setDepartment(registerDTO.getDepartment());
         newUser.setRole(Roles.USER);
 
         newUser.setApproved(false);
+
+        Image profileImage = new Image(
+                registerDTO.getImage().getName(),
+                registerDTO.getImage().getType(),
+                registerDTO.getImage().getBase64Img()
+        );
+
+        newUser.setProfileImage(profileImage);
 
         this.userRepository.save(newUser);
 
