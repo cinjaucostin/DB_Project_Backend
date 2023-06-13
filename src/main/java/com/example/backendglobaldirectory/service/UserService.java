@@ -35,12 +35,13 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = this.userRepository.getUserByEmail(email);
+        Optional<User> optionalUser = this.userRepository.findByEmail(email);
 
-        if (user == null) {
+        if (optionalUser.isEmpty()) {
             throw new UsernameNotFoundException("Not found!");
         }
-        return new MyUserDetails(user);
+
+        return new MyUserDetails(optionalUser.get());
     }
 
     public ResponseEntity<ResponseDTO> performRegister(RegisterDTO registerDTO)

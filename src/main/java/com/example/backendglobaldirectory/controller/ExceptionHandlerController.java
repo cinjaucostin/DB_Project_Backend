@@ -5,6 +5,7 @@ import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -19,6 +20,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ResponseDTO> catchUserNotFoundException(UserNotFoundException e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ResponseDTO> catchUsernameNotFoundException(UsernameNotFoundException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
