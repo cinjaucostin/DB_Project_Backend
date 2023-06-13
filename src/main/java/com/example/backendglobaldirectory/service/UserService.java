@@ -1,3 +1,6 @@
+package com.example.backendglobaldirectory.service;
+
+import com.example.backendglobaldirectory.dto.MyUserDetails;
 import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.Roles;
@@ -9,12 +12,15 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -25,7 +31,7 @@ public class UserService {
     public void initPasswordEncoder() {
 //        passwordEncoder = new BCryptPasswordEncoder();
     }
-  
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = this.userRepository.getUserByEmail(email);
@@ -72,7 +78,7 @@ public class UserService {
             throws UserNotFoundException {
         Optional<User> userOptional = this.userRepository.findById(uid);
 
-        if(userOptional.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException("No user found with the given uid. Can't perform the approval.");
         }
 
@@ -83,3 +89,4 @@ public class UserService {
                 HttpStatus.OK
         );
     }
+}
