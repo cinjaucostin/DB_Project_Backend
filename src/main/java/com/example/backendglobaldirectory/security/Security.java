@@ -36,8 +36,10 @@ public class Security {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/register")
-                .permitAll()
+                .requestMatchers("/register").permitAll()
+                .and()
+                .authorizeHttpRequests().requestMatchers("/approve").hasAnyAuthority("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .formLogin().usernameParameter("email").permitAll()
                 .and()
