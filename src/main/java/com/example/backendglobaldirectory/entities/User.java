@@ -1,10 +1,14 @@
 package com.example.backendglobaldirectory.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User {
@@ -52,4 +56,10 @@ public class User {
     @Column(name = "job_title")
     private String jobTitle;
 
+    public boolean hasRole(String roleName) {
+        if(role.equals(roleName)) {
+            return true;
+        }
+        return false;
+    }
 }
