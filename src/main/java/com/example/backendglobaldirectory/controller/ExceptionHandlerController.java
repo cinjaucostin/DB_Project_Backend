@@ -1,0 +1,29 @@
+package com.example.backendglobaldirectory.controller;
+
+import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
+import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class ExceptionHandlerController {
+
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ResponseEntity<ResponseDTO> catchEmailAlreadyUsedException(EmailAlreadyUsedException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ResponseDTO> catchUserNotFoundException(UserNotFoundException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDTO> catchGeneralException(Exception e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+}
