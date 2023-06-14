@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
 import com.example.backendglobaldirectory.dto.MyUserDetails;
 import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
@@ -7,6 +8,7 @@ import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
+import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import com.example.backendglobaldirectory.utils.Utils;
@@ -102,6 +104,32 @@ public class UserService implements UserDetailsService {
 
         return new ResponseEntity<>(
                 new ResponseDTO("User approved succesfully."),
+                HttpStatus.OK
+        );
+    }
+
+
+    public ResponseEntity<ResponseDTO> changePassword(ForgotPasswordDTO forgotPasswordDTO)
+            throws ThePasswordsDoNotMatchException, UserNotFoundException {
+
+        Optional<User> userOptional = this.userRepository.findByEmail(forgotPasswordDTO.getEmail());
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("No user found with the given email. Can't perform the password change.");
+        }
+
+        User user = userOptional.get();
+
+        if (!forgotPasswordDTO.getPassword().equals(forgotPasswordDTO.getConfirmPassword())) {
+            throw new ThePasswordsDoNotMatchException("The passwords do not match.");
+        }
+
+        user.setPassword(passwordEncoder.encode(forgotPasswordDTO.getPassword()));
+
+        userRepository.save(user);
+
+        return new ResponseEntity<>(
+                new ResponseDTO("Password changed."),
                 HttpStatus.OK
         );
     }
