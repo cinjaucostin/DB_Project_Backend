@@ -1,10 +1,9 @@
 package com.example.backendglobaldirectory.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class ForgotPasswordDTO {
+public class SendEmailDTO {
     private String email;
-    private String password;
-    private String confirmPassword;
 }
