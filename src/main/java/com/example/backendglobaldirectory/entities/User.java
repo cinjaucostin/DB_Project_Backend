@@ -42,13 +42,10 @@ public class User {
     @JoinColumn(name = "profile_image", referencedColumnName = "id")
     private Image profileImage;
 
-    @ElementCollection
     private List<String> skills;
 
-    @ElementCollection
     private List<String> previousExperience;
 
-    @ElementCollection
     private List<String> hobbies;
 
     private String team;
