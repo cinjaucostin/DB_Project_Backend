@@ -30,7 +30,8 @@ public class ForgotPasswordController {
 
     @PostMapping("/sendEmail")
     public ResponseEntity<String> register(@RequestBody SendEmailDTO sendEmailDTO)
-    {
+            throws UserNotFoundException {
+        System.out.println(sendEmailDTO.getEmail());
         return new ResponseEntity<>(this.emailSenderService.createEmail(sendEmailDTO.getEmail()), HttpStatus.OK);
     }
 

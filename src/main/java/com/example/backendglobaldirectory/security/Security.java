@@ -36,15 +36,17 @@ public class Security {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/register", "/sendEmail").permitAll()
+                    .requestMatchers("/register").permitAll()
+                    .requestMatchers("/sendEmail").permitAll()
+                    .requestMatchers("/reset").permitAll()
+                    .requestMatchers("/approve").hasAnyAuthority("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/approve").hasAnyAuthority("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().usernameParameter("email").permitAll()
+                .formLogin()
+                    .usernameParameter("email").permitAll()
                 .and()
                 .logout().permitAll()
-                .invalidateHttpSession(true);
+                    .invalidateHttpSession(true);
         return http.build();
     }
 
