@@ -56,9 +56,6 @@ public class User {
     private String jobTitle;
 
     public boolean hasRole(String roleName) {
-        if(role.equals(roleName)) {
-            return true;
-        }
-        return false;
+        return this.role.name().equals(roleName);
     }
 }

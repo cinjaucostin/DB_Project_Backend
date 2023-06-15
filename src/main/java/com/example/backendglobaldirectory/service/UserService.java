@@ -46,6 +46,7 @@ public class UserService implements UserDetailsService {
         return new MyUserDetails(optionalUser.get());
     }
 
+
     public ResponseEntity<ResponseDTO> performRegister(RegisterDTO registerDTO)
             throws EmailAlreadyUsedException {
         Optional<User> userByEmailOptional = this.userRepository
