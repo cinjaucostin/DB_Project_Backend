@@ -114,11 +114,7 @@ public class UserService implements UserDetailsService {
 
         Optional<User> userOptional = this.userRepository.findByEmail(forgotPasswordDTO.getEmail());
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("No user found with the given email. Can't perform the password change.");
-        }
-
-        User user = userOptional.get();
+        User user = userOptional.orElseThrow(() -> new UserNotFoundException("No user found with the given email. Can't perform the password change."));
 
         if (!forgotPasswordDTO.getPassword().equals(forgotPasswordDTO.getConfirmPassword())) {
             throw new ThePasswordsDoNotMatchException("The passwords do not match.");

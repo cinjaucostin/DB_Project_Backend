@@ -1,10 +1,8 @@
 package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
-import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.dto.SendEmailDTO;
-import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.EmailSenderService;
@@ -31,7 +29,6 @@ public class ForgotPasswordController {
     @PostMapping("/sendEmail")
     public ResponseEntity<String> register(@RequestBody SendEmailDTO sendEmailDTO)
             throws UserNotFoundException {
-        System.out.println(sendEmailDTO.getEmail());
         return new ResponseEntity<>(this.emailSenderService.createEmail(sendEmailDTO.getEmail()), HttpStatus.OK);
     }
 
