@@ -22,14 +22,4 @@ public class PostsController {
         return this.postsRepository.findAll();
     }
 
-    @PostMapping("/loginSuccess")
-    public void test() {
-        System.out.println("S-a facut login");
-    }
-
-    @GetMapping("/logoutSuccess")
-    public void test2() {
-        System.out.println("S-a facut logout");
-    }
-
 }

@@ -13,9 +13,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +37,19 @@ public class Security {
     private CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     public AuthenticationManager authenticationManagerBean() {
         List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-        authenticationProviders.add(customAuthenticationProvider);
+        authenticationProviders.add(this.customAuthenticationProvider);
 
         return new ProviderManager(authenticationProviders);
     }
@@ -54,10 +67,10 @@ public class Security {
                         .requestMatchers(HttpMethod.GET, "/logout")
                         .authenticated()
                         .anyRequest().permitAll())
-                .addFilterAt(new CustomUsernamePasswordAuthenticationFilter(authenticationManagerBean()),
-                        UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form ->
-                        form.usernameParameter("email")
+                        form
+//                                .loginPage("/login")
+                                .loginProcessingUrl("/login")
                                 .successForwardUrl("/loginSuccess")
                                 .permitAll())
                 .logout(logout ->
@@ -66,7 +79,7 @@ public class Security {
                                 .deleteCookies("JSESSIONID")
                                 .logoutSuccessUrl("/logoutSuccess"));
 
-        http.authenticationManager(authenticationManagerBean());
+        http.authenticationProvider(this.customAuthenticationProvider);
 
         return http.build();
     }
