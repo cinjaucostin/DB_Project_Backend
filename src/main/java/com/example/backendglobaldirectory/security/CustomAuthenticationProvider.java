@@ -32,10 +32,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        for(GrantedAuthority authority : userDetails.getAuthorities()) {
-            System.out.println(authority.getAuthority());
-        }
-
         if(passwordEncoder().matches(password, userDetails.getPassword())) {
             UsernamePasswordAuthenticationToken token =
                     new UsernamePasswordAuthenticationToken(

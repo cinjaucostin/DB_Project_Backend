@@ -23,4 +23,6 @@ public class RegisterDTO {
     private String department;
 
     private ImageDTO image;
+
+    // + metoda to entity.
 }

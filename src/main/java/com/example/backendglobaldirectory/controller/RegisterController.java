@@ -17,6 +17,9 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
+    // /user/register
+    // ar trebui sa intoarca User
+    // + framework de logging
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterDTO registerDTO)
             throws EmailAlreadyUsedException {
