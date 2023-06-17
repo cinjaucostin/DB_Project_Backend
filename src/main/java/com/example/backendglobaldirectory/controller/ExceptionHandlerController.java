@@ -3,6 +3,8 @@ package com.example.backendglobaldirectory.controller;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +22,16 @@ public class ExceptionHandlerController {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ResponseDTO> catchUserNotFoundException(UserNotFoundException e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ResponseDTO> catchExpiredJwtException(JwtException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ResponseDTO> catchExpiredJwtException(ExpiredJwtException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
