@@ -4,6 +4,8 @@ import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

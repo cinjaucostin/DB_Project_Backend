@@ -1,8 +1,9 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.entities.User;
-import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,6 +28,12 @@ public class EmailSenderService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private TokenRepository tokenRepository;
+
 
     public String createEmail(String email)
             throws UserNotFoundException {
@@ -32,14 +42,28 @@ public class EmailSenderService {
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("No user found with the given email. Can't perform the password change.");
         }
-        String toEmail = email;
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", List.of(userOptional.get().getRole().name()));
+
+        String jwtToken = this.jwtService.generateToken(claims, userOptional.get());
+
+        Token token = new Token(jwtToken,
+                false,
+                false,
+                userOptional.get());
+
+        this.tokenRepository.save(token);
+
+        String link = "http://localhost:3000/resetPassword?token=" + jwtToken;
+
         String subject = "Reset password";
         String body = "Dear user ,\n"
                 + "You have requested to reset your password. Please click the link below to proceed with the password reset process:\n\n"
-                + "resetLink" + "\n"
+                + link + "\n"
                 + "If you did not request a password reset, please ignore this email.\n"
                 + "Thank you.\n";
-        return sendEmail(toEmail, subject, body);
+        return sendEmail(email, subject, body);
     }
 
     public String sendEmail(String toEmail, String subject, String body){

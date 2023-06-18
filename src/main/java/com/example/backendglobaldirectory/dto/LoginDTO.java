@@ -3,7 +3,7 @@ package com.example.backendglobaldirectory.dto;
 import lombok.Data;
 
 @Data
-public class ForgotPasswordDTO {
+public class LoginDTO {
+    private String email;
     private String password;
-    private String confirmPassword;
 }
