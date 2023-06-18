@@ -1,7 +1,6 @@
 package com.example.backendglobaldirectory.security;
 
 import com.example.backendglobaldirectory.service.UserService;
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,8 +53,10 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register")
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/sendEmail")
                         .permitAll()
+                        .requestMatchers( "/reset")
+                        .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/approve")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/posts")
@@ -68,9 +69,9 @@ public class SecurityConfig {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler(
                                         (request, response, authentication) ->
-                                        SecurityContextHolder.clearContext()))
+                                                SecurityContextHolder.clearContext()))
                 .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

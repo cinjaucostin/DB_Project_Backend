@@ -7,9 +7,13 @@ import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchExcept
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.EmailSenderService;
 import com.example.backendglobaldirectory.service.UserService;
+import io.jsonwebtoken.JwtParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,10 +24,25 @@ public class ForgotPasswordController {
     @Autowired
     private EmailSenderService emailSenderService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
     @PatchMapping("/reset")
     public ResponseEntity<ResponseDTO> register(@RequestBody ForgotPasswordDTO forgotPasswordDTO)
             throws ThePasswordsDoNotMatchException, UserNotFoundException {
-        return this.userService.changePassword(forgotPasswordDTO);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Extract the username from the authentication object
+            String email = authentication.getName();
+            System.out.println(email);
+            // Do something with the username
+            return this.userService.changePassword(forgotPasswordDTO, email);
+        }
+        return new ResponseEntity<>(
+                new ResponseDTO("Wrong Token!"),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/sendEmail")
