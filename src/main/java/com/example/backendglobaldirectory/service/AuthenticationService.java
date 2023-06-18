@@ -1,15 +1,11 @@
 package com.example.backendglobaldirectory.service;
 
-import com.example.backendglobaldirectory.dto.LoginDTO;
-import com.example.backendglobaldirectory.dto.RegisterDTO;
-import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.dto.*;
 import com.example.backendglobaldirectory.entities.Image;
-import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.repository.TokenRepository;
-import com.example.backendglobaldirectory.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,7 +53,7 @@ public class AuthenticationService {
         this.tokenRepository.saveAll(tokens);
     }
 
-    public ResponseEntity<ResponseDTO> performRegister(RegisterDTO registerDTO)
+    public ResponseEntity<User> performRegister(RegisterDTO registerDTO)
             throws EmailAlreadyUsedException {
         Optional<User> userByEmailOptional = this.userService
                 .findByEmail(registerDTO.getEmail());
@@ -66,42 +62,21 @@ public class AuthenticationService {
             throw new EmailAlreadyUsedException("Email already used.");
         }
 
-        User newUser = new User();
-        newUser.setEmail(registerDTO.getEmail());
-
-        newUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-
-        newUser.setFirstName(registerDTO.getFirstName());
-        newUser.setLastName(registerDTO.getLastName());
-
-        newUser.setDateOfEmployment(Utils.convertDateStringToLocalDateTime(
-                registerDTO.getDateOfEmployment())
-        );
-
-        newUser.setJobTitle(registerDTO.getJobTitle());
-        newUser.setTeam(registerDTO.getTeam());
-        newUser.setDepartment(registerDTO.getDepartment());
-        newUser.setRole(Roles.USER);
-
-        newUser.setApproved(false);
-
-        Image profileImage = new Image(
-                registerDTO.getImage().getName(),
-                registerDTO.getImage().getType(),
-                registerDTO.getImage().getBase64Img()
-        );
-
+        User newUser = RegisterDTO.toUserEntity(registerDTO, passwordEncoder);
+        Image profileImage = ImageDTO.toImageEntity(registerDTO.getImage());
         newUser.setProfileImage(profileImage);
 
         this.userService.save(newUser);
 
+        newUser.setPassword(null);
+
         return new ResponseEntity<>(
-                new ResponseDTO("User registered."),
+                newUser,
                 HttpStatus.OK
         );
     }
 
-    public ResponseEntity<ResponseDTO> performLogin(LoginDTO loginDTO,
+    public ResponseEntity<LoginResponse> performLogin(LoginDTO loginDTO,
                                                     HttpServletRequest request,
                                                     HttpServletResponse response) {
         authenticationManager.authenticate(
@@ -116,7 +91,6 @@ public class AuthenticationService {
 
         revokeAndExpireUserTokens(user.getId());
 
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", List.of(user.getRole().name()));
 
@@ -128,7 +102,7 @@ public class AuthenticationService {
 
         this.tokenRepository.save(token);
 
-        return new ResponseEntity<>(new ResponseDTO(jwtToken), HttpStatus.OK);
+        return new ResponseEntity<>(new LoginResponse(user.getId(), jwtToken), HttpStatus.OK);
     }
 
 

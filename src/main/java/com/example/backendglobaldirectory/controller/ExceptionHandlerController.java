@@ -24,16 +24,6 @@ public class ExceptionHandlerController {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ResponseDTO> catchExpiredJwtException(JwtException e) {
-        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ResponseDTO> catchExpiredJwtException(ExpiredJwtException e) {
-        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.FORBIDDEN);
-    }
-
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ResponseDTO> catchUsernameNotFoundException(UsernameNotFoundException e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);

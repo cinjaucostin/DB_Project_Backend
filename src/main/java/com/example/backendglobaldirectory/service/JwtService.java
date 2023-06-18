@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,11 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
+    @Value("${auth.token.secret_key}")
+    private String SECRET_KEY;
+
+    @Value("${auth.token.lifecycle}")
+    private int TOKEN_LIFECYCLE;
 
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
@@ -50,18 +55,17 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plus(24, ChronoUnit.HOURS)))
+                .setExpiration(Date.from(Instant.now().plus(TOKEN_LIFECYCLE, ChronoUnit.HOURS)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public boolean isTokenValid(String jwtToken,
+    public boolean isTokenValidForUser(String jwtToken,
                                 UserDetails userDetails) {
 
         final String username = extractUsername(jwtToken);
 
-        return (username.equals(userDetails.getUsername())) &&
-                !isTokenExpired(jwtToken);
+        return (username.equals(userDetails.getUsername()));
 
     }
 

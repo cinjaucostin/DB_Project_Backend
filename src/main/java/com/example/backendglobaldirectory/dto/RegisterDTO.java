@@ -1,6 +1,10 @@
 package com.example.backendglobaldirectory.dto;
 
+import com.example.backendglobaldirectory.entities.Roles;
+import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.utils.Utils;
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -24,5 +28,28 @@ public class RegisterDTO {
 
     private ImageDTO image;
 
-    // + metoda to entity.
+    public static User toUserEntity(RegisterDTO registerDTO,
+                                    PasswordEncoder passwordEncoder) {
+        User newUser = new User();
+        newUser.setEmail(registerDTO.getEmail());
+
+        newUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+
+        newUser.setFirstName(registerDTO.getFirstName());
+        newUser.setLastName(registerDTO.getLastName());
+
+        newUser.setDateOfEmployment(Utils.convertDateStringToLocalDateTime(
+                registerDTO.getDateOfEmployment())
+        );
+
+        newUser.setJobTitle(registerDTO.getJobTitle());
+        newUser.setTeam(registerDTO.getTeam());
+        newUser.setDepartment(registerDTO.getDepartment());
+        newUser.setRole(Roles.USER);
+
+        newUser.setApproved(false);
+
+        return newUser;
+    }
+
 }

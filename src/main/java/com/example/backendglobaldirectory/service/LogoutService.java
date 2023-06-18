@@ -2,7 +2,6 @@ package com.example.backendglobaldirectory.service;
 
 import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.repository.TokenRepository;
-import com.example.backendglobaldirectory.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -55,17 +54,17 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register")
+                        .requestMatchers("/api/auth/login", "/api/auth/register")
                         .permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/approve")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/approve")
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/posts")
+                        .requestMatchers(HttpMethod.GET, "/api/posts")
                         .hasAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/logout")
+                        .requestMatchers(HttpMethod.GET, "/api/auth/logout")
                         .authenticated()
                         .anyRequest().permitAll())
                 .logout(logout ->
-                        logout.logoutUrl("/logout")
+                        logout.logoutUrl("/api/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler(
                                         (request, response, authentication) ->

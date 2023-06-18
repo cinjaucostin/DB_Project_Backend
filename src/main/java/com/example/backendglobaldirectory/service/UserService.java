@@ -1,23 +1,15 @@
 package com.example.backendglobaldirectory.service;
 
-import com.example.backendglobaldirectory.dto.LoginDTO;
-import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.entities.Image;
-import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
-import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
