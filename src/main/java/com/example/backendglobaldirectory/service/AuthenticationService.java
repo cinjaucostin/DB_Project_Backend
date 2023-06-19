@@ -5,6 +5,7 @@ import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
+import com.example.backendglobaldirectory.exception.InvalidInputException;
 import com.example.backendglobaldirectory.repository.TokenRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +55,7 @@ public class AuthenticationService {
     }
 
     public ResponseEntity<User> performRegister(RegisterDTO registerDTO)
-            throws EmailAlreadyUsedException {
+            throws EmailAlreadyUsedException, InvalidInputException {
         Optional<User> userByEmailOptional = this.userService
                 .findByEmail(registerDTO.getEmail());
 

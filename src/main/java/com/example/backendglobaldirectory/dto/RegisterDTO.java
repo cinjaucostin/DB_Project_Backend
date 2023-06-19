@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.dto;
 
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.InvalidInputException;
 import com.example.backendglobaldirectory.utils.Utils;
 import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,24 +30,23 @@ public class RegisterDTO {
     private ImageDTO image;
 
     public static User toUserEntity(RegisterDTO registerDTO,
-                                    PasswordEncoder passwordEncoder) {
+                                    PasswordEncoder passwordEncoder)
+            throws InvalidInputException {
+
+        LocalDateTime dateOfEmployment = Utils.convertDateStringToLocalDateTime(
+                registerDTO.getDateOfEmployment()
+        ).orElseThrow(() -> new InvalidInputException("Wrong date of employment."));
+
         User newUser = new User();
         newUser.setEmail(registerDTO.getEmail());
-
         newUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-
         newUser.setFirstName(registerDTO.getFirstName());
         newUser.setLastName(registerDTO.getLastName());
-
-        newUser.setDateOfEmployment(Utils.convertDateStringToLocalDateTime(
-                registerDTO.getDateOfEmployment())
-        );
-
         newUser.setJobTitle(registerDTO.getJobTitle());
         newUser.setTeam(registerDTO.getTeam());
         newUser.setDepartment(registerDTO.getDepartment());
+        newUser.setDateOfEmployment(dateOfEmployment);
         newUser.setRole(Roles.USER);
-
         newUser.setApproved(false);
 
         return newUser;

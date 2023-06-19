@@ -5,6 +5,7 @@ import com.example.backendglobaldirectory.dto.LoginResponse;
 import com.example.backendglobaldirectory.dto.RegisterDTO;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
+import com.example.backendglobaldirectory.exception.InvalidInputException;
 import com.example.backendglobaldirectory.service.AuthenticationService;
 import com.example.backendglobaldirectory.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterDTO registerDTO)
-            throws EmailAlreadyUsedException {
+            throws EmailAlreadyUsedException, InvalidInputException {
         return this.authenticationService.performRegister(registerDTO);
     }
 

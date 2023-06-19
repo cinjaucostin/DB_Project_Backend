@@ -31,18 +31,43 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
     }
 
-    public ResponseEntity<ResponseDTO> performAccountApprove(int uid)
+    public ResponseEntity<ResponseDTO> performAccountApproveOrReject(int uid, boolean approved)
             throws UserNotFoundException {
-        Optional<User> userOptional = this.userRepository.findById(uid);
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("No user found with the given uid. Can't perform the approval.");
-        }
+        User user = this.userRepository.findById(uid)
+                .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
+                        "Can't perform the approval/reject."));
 
-        userOptional.get().setApproved(true);
+        user.setApproved(approved);
+        user.setActive(approved);
+
+        this.userRepository.save(user);
 
         return new ResponseEntity<>(
-                new ResponseDTO("User approved succesfully."),
+                new ResponseDTO("User approved/rejected succesfully."),
+                HttpStatus.OK
+        );
+
+    }
+
+    public ResponseEntity<ResponseDTO> performAccountApprove(int uid)
+            throws UserNotFoundException {
+
+
+    }
+
+    public ResponseEntity<ResponseDTO> performAccountStatusSwitch(int uid, boolean active)
+            throws UserNotFoundException {
+        User user = this.userRepository.findById(uid)
+                .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
+                        "Can't perform the activation/inactivation."));
+
+        user.setActive(active);
+
+        this.userRepository.save(user);
+
+        return new ResponseEntity<>(
+                new ResponseDTO("User activated/inactivated succesfully."),
                 HttpStatus.OK
         );
     }
@@ -54,8 +79,6 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByEmail(String email) {
         return this.userRepository.findByEmail(email);
     }
-
-
 
     public ResponseEntity<ResponseDTO> changePassword(ForgotPasswordDTO forgotPasswordDTO, String email)
             throws ThePasswordsDoNotMatchException, UserNotFoundException {
@@ -77,4 +100,5 @@ public class UserService implements UserDetailsService {
                 HttpStatus.OK
         );
     }
+
 }

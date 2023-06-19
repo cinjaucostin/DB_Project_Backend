@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
+import com.example.backendglobaldirectory.exception.InvalidInputException;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -35,6 +36,10 @@ public class ExceptionHandlerController {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ResponseDTO> catchInvalidInputException(InvalidInputException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO> catchGeneralException(Exception e) {
