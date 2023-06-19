@@ -50,12 +50,6 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public ResponseEntity<ResponseDTO> performAccountApprove(int uid)
-            throws UserNotFoundException {
-
-
-    }
-
     public ResponseEntity<ResponseDTO> performAccountStatusSwitch(int uid, boolean active)
             throws UserNotFoundException {
         User user = this.userRepository.findById(uid)
