@@ -47,7 +47,7 @@ public class RegisterDTO {
         newUser.setDepartment(registerDTO.getDepartment());
         newUser.setRole(Roles.USER);
 
-        newUser.setApproved(false);
+        newUser.setApproved(true);
 
         return newUser;
     }
