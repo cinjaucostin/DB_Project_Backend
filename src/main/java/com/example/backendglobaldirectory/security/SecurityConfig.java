@@ -64,12 +64,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/auth/logout")
                         .authenticated()
                         .anyRequest().permitAll())
-                .logout(logout ->
-                        logout.logoutUrl("/api/auth/logout")
-                                .addLogoutHandler(logoutHandler)
+                .logout(logoutConfigurer ->
+                        logoutConfigurer
                                 .logoutSuccessHandler(
                                         (request, response, authentication) ->
                                                 SecurityContextHolder.clearContext()))
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
