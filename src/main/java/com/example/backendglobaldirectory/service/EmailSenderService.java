@@ -5,12 +5,14 @@ import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
+import com.example.backendglobaldirectory.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ public class EmailSenderService {
 
     @Autowired
     private TokenRepository tokenRepository;
-
 
     public String createEmail(String email)
             throws UserNotFoundException {
@@ -64,6 +65,18 @@ public class EmailSenderService {
                 + "If you did not request a password reset, please ignore this email.\n"
                 + "Thank you.\n";
         return sendEmail(email, subject, body);
+    }
+
+    public void sendAnniversaryEmailToUser(User user, int noOfYears)
+            throws FileNotFoundException {
+        String anniversaryMailFormat = Utils.readAnniversaryMailPattern();
+
+        String emailBody = String.format(
+                anniversaryMailFormat,
+                user.getFirstName() + " " + user.getLastName(),
+                noOfYears);
+
+        sendEmail(user.getEmail(), "Anniversary email", emailBody);
     }
 
     public String sendEmail(String toEmail, String subject, String body){

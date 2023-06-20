@@ -1,12 +1,17 @@
 package com.example.backendglobaldirectory.entities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "posts")
+@Schema(description = "Details about a post, each user can have multiple " +
+        "posts associated with his account.")
+@NoArgsConstructor
 @Getter
 @Setter
 public class Post {
@@ -16,14 +21,25 @@ public class Post {
     private int id;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "Each post has one of this post types: ANNIVERSARY, JOINING, PROMOTION POST")
     private PostType type;
 
+    @Schema(description = "The details about the post, like a description.")
     private String text;
 
+    @Schema(description = "The timestamp when it was created.")
     private LocalDateTime timestamp;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @Schema(description = "The user associated with the post. Each post has only one user.")
     private User user;
+
+    public Post(PostType type, String text, LocalDateTime timestamp, User user) {
+        this.type = type;
+        this.text = text;
+        this.timestamp = timestamp;
+        this.user = user;
+    }
 
 }
