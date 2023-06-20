@@ -57,19 +57,19 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers( "/reset")
                         .hasAnyAuthority("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/approve")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/activate", "/api/users/inactivate")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/posts")
-                        .hasAuthority("USER")
+                        .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/logout")
                         .authenticated()
                         .anyRequest().permitAll())
-                .logout(logout ->
-                        logout.logoutUrl("/api/auth/logout")
-                                .addLogoutHandler(logoutHandler)
+                .logout(logoutConfigurer ->
+                        logoutConfigurer
                                 .logoutSuccessHandler(
                                         (request, response, authentication) ->
                                                 SecurityContextHolder.clearContext()))
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

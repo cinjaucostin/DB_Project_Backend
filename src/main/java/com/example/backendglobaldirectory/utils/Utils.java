@@ -1,17 +1,16 @@
 package com.example.backendglobaldirectory.utils;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 public class Utils {
+
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    public static LocalDateTime convertDateStringToLocalDateTime(String dateString) {
-
+    public static Optional<LocalDateTime> convertDateStringToLocalDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
         LocalDate date = LocalDate.parse(dateString, formatter);
@@ -19,9 +18,13 @@ public class Utils {
 
         LocalDateTime dateTime = LocalDateTime.of(date, time);
 
-        System.out.println(dateTime);
+        LocalDateTime currentTime = LocalDateTime.now();
 
-        return dateTime;
+        if(dateTime.isAfter(currentTime)) {
+            return Optional.empty();
+        }
 
+        return Optional.of(dateTime);
     }
+
 }
