@@ -5,6 +5,7 @@ import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TokenService tokenService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -36,7 +40,7 @@ public class UserService implements UserDetailsService {
 
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
-                        "Can't perform the approval/reject."));
+                        "Can't perform the " + (approved ? "approve." : "reject.")));
 
         user.setApproved(approved);
         user.setActive(approved);
@@ -44,7 +48,7 @@ public class UserService implements UserDetailsService {
         this.userRepository.save(user);
 
         return new ResponseEntity<>(
-                new ResponseDTO("User approved/rejected succesfully."),
+                new ResponseDTO("User " + (approved ? "approved" : "rejected") + " succesfully."),
                 HttpStatus.OK
         );
 
@@ -54,14 +58,18 @@ public class UserService implements UserDetailsService {
             throws UserNotFoundException {
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
-                        "Can't perform the activation/inactivation."));
+                        "Can't perform the " + (active ? "activation." : "inactivation.")));
 
         user.setActive(active);
 
         this.userRepository.save(user);
 
+        if(!active) {
+            this.tokenService.revokeAllTokensForUser(uid);
+        }
+
         return new ResponseEntity<>(
-                new ResponseDTO("User activated/inactivated succesfully."),
+                new ResponseDTO("User " + (active ? "activated" : "inactivated") + " succesfully."),
                 HttpStatus.OK
         );
     }
@@ -94,5 +102,6 @@ public class UserService implements UserDetailsService {
                 HttpStatus.OK
         );
     }
+
 
 }
