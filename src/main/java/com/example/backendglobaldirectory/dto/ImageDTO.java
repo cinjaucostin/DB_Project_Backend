@@ -1,7 +1,6 @@
 package com.example.backendglobaldirectory.dto;
 
 import com.example.backendglobaldirectory.entities.Image;
-import com.example.backendglobaldirectory.entities.User;
 import lombok.Data;
 
 @Data
