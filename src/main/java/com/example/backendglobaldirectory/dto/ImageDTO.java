@@ -10,11 +10,16 @@ public class ImageDTO {
     private String base64Img;
 
     public static Image toImageEntity(ImageDTO imageDTO) {
+        if(imageDTO == null) {
+            return null;
+        }
+
         return new Image(
                 imageDTO.getName(),
                 imageDTO.getType(),
                 imageDTO.getBase64Img()
         );
+
     }
 
 }

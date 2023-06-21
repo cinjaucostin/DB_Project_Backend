@@ -7,7 +7,6 @@ import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchExcept
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.EmailSenderService;
 import com.example.backendglobaldirectory.service.UserService;
-import io.jsonwebtoken.JwtParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 public class ForgotPasswordController {
     @Autowired
     private UserService userService;

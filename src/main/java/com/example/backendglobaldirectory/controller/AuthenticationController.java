@@ -29,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 public class AuthenticationController {
 
     @Autowired
@@ -91,7 +91,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "403",
                     description = "The user is not logged in so he can't perform the log out.",
                     content = {@Content( schema = @Schema())})})
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public void logout(HttpServletRequest request,
                        HttpServletResponse response,
                        Authentication authentication) {

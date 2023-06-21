@@ -26,7 +26,7 @@ public class Image {
     private String type;
 
     @Lob
-    @Column(name = "image_encoded")
+    @Column(name = "image_encoded", columnDefinition = "LONGTEXT")
     @Schema(description = "A string which represents the image encoded in Base64.")
     private String imageEncoded;
 

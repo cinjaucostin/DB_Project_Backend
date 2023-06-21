@@ -57,11 +57,12 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers( "/reset")
                         .hasAnyAuthority("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/activate", "/api/users/inactivate")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/reject",
+                                "/api/users/activate", "/api/users/inactivate")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/posts")
                         .hasAnyAuthority("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.GET, "/api/auth/logout")
+                        .requestMatchers(HttpMethod.POST, "/api/auth/logout")
                         .authenticated()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->
