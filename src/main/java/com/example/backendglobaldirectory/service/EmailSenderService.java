@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -78,6 +79,33 @@ public class EmailSenderService {
 
         sendEmail(user.getEmail(), "Anniversary email", emailBody);
     }
+
+    public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO)
+            throws FileNotFoundException {
+        String rejectMailFormat = Utils.readRejectMailPattern();
+
+        String emailBody = String.format(
+                rejectMailFormat,
+                user.getFirstName() + " " + user.getLastName(),
+                (rejectDTO.getReason() == null ? "-" : rejectDTO.getReason()),
+                (rejectDTO.getDescription() == null ? "-" : rejectDTO.getDescription())
+        );
+
+        sendEmail(user.getEmail(), "Register request rejected", emailBody);
+    }
+
+    public void sendApprovedNotificationEmailToUser(User user)
+            throws FileNotFoundException {
+        String approvedMailFormat = Utils.readApproveMailPattern();
+
+        String emailBody = String.format(
+                approvedMailFormat,
+                user.getFirstName() + " " + user.getLastName()
+        );
+
+        sendEmail(user.getEmail(), "Register request approved", emailBody);
+    }
+
 
     public String sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
