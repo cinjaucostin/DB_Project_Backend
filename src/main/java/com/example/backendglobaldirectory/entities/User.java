@@ -57,7 +57,7 @@ public class User implements UserDetails {
     @Schema(description = "The date when he was employed by the company.")
     private LocalDateTime dateOfEmployment;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_image", referencedColumnName = "id")
     @Schema(description = "Each user can have only one profile image.")
     private Image profileImage;

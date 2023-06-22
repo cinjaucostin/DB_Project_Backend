@@ -3,6 +3,8 @@ package com.example.backendglobaldirectory.service;
 import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
 import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.dto.UserProfileDTO;
+import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -18,6 +20,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -48,16 +54,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (approved ? "approve." : "reject.")));
 
-        user.setApproved(approved);
-        user.setActive(approved);
-
         if(approved) {
+            user.setApproved(true);
+            user.setActive(true);
+            this.userRepository.save(user);
             this.emailSenderService.sendApprovedNotificationEmailToUser(user);
         } else {
+            this.userRepository.deleteById(user.getId());
             this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
         }
-
-        this.userRepository.save(user);
 
         return new ResponseEntity<>(
                 new ResponseDTO("User " + (approved ? "approved" : "rejected") + " succesfully."),
@@ -115,5 +120,21 @@ public class UserService implements UserDetailsService {
         );
     }
 
+
+    public List<UserProfileDTO> getRegistersRequestsWaitingForApprove() {
+        return UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByApproved(false));
+    }
+
+    public List<UserProfileDTO> getUsersByStatus(Principal principal, boolean active) {
+        return UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByActive(active))
+                .stream().filter((userProfileDTO -> !Objects.equals(userProfileDTO.getRole(), Roles.ADMIN.name())
+                        && !Objects.equals(userProfileDTO.getEmail(), principal.getName()))).toList();
+    }
+
+    public UserProfileDTO getUserProfileById(int id) {
+        User user = this.userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("User not found!"));
+        return UserProfileDTO.fromUserEntity(user);
+    }
 
 }
