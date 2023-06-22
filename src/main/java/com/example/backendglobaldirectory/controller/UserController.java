@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.controller;
 
+import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.UserService;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -42,8 +45,8 @@ public class UserController {
     public ResponseEntity<ResponseDTO> approveRegister(
             @Parameter(description = "User id to make approve account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException {
-        return this.userService.performAccountApproveOrReject(uid, true);
+            throws UserNotFoundException, FileNotFoundException {
+        return this.userService.performAccountApproveOrReject(uid, true, null);
     }
 
     @Operation(summary = "Reject a register account request from an user.",
@@ -52,9 +55,10 @@ public class UserController {
     @PutMapping("/reject")
     public ResponseEntity<ResponseDTO> rejectRegister(
             @Parameter(description = "User id to make reject account for.", example = "2")
-            @RequestParam int uid)
-            throws UserNotFoundException {
-        return this.userService.performAccountApproveOrReject(uid, false);
+            @RequestParam int uid,
+            @RequestBody RejectDTO rejectDTO)
+            throws UserNotFoundException, FileNotFoundException {
+        return this.userService.performAccountApproveOrReject(uid, false, rejectDTO);
     }
 
     @Operation(summary = "Activate an account.",

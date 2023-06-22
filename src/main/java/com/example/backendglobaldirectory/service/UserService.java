@@ -1,12 +1,13 @@
 package com.example.backendglobaldirectory.service;
 
 import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
+import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
-import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -27,6 +29,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private EmailSenderService emailSenderService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -35,8 +40,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
     }
 
-    public ResponseEntity<ResponseDTO> performAccountApproveOrReject(int uid, boolean approved)
-            throws UserNotFoundException {
+    public ResponseEntity<ResponseDTO> performAccountApproveOrReject(
+            int uid, boolean approved, RejectDTO rejectDTO)
+            throws UserNotFoundException, FileNotFoundException {
 
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
@@ -44,6 +50,12 @@ public class UserService implements UserDetailsService {
 
         user.setApproved(approved);
         user.setActive(approved);
+
+        if(approved) {
+            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
+        } else {
+            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
+        }
 
         this.userRepository.save(user);
 

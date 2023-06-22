@@ -12,6 +12,8 @@ public class Utils {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String ANNIVERSARY_EMAIL_PATTERN_PATH = "src/main/resources/anniversary_mail_pattern.txt";
+    public static final String REJECT_EMAIL_PATTERN_PATH = "src/main/resources/reject_mail_pattern.txt";
+    public static final String APPROVE_EMAIL_PATTERN_PATH = "src/main/resources/approve_mail_pattern.txt";
 
     public static Optional<LocalDateTime> convertDateStringToLocalDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -48,6 +50,14 @@ public class Utils {
 
     public static String readAnniversaryMailPattern() throws FileNotFoundException {
         return readMailPattern(ANNIVERSARY_EMAIL_PATTERN_PATH);
+    }
+
+    public static String readRejectMailPattern() throws FileNotFoundException {
+        return readMailPattern(REJECT_EMAIL_PATTERN_PATH);
+    }
+
+    public static String readApproveMailPattern() throws FileNotFoundException {
+        return readMailPattern(APPROVE_EMAIL_PATTERN_PATH);
     }
 
 }
