@@ -2,6 +2,8 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.dto.UserProfileDTO;
+import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,10 +13,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,6 +28,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/approved")
+    private List<User> getRegisterRequestsWaitingForApprove() {
+        return null;
+    }
+
 
     @Operation(summary = "Approve a register account request from an user.",
             description = "Approve the register, so the user can log in on the platform. It's a specific action of an admin " +
@@ -80,6 +91,30 @@ public class UserController {
             @RequestParam int uid)
             throws UserNotFoundException {
         return this.userService.performAccountStatusSwitch(uid, false);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable int id,
+                                                         Principal principal) {
+        return new ResponseEntity<>(
+                this.userService.getUserProfileById(id),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/registerRequests")
+    public List<UserProfileDTO> getRegistersRequestsWaitingForApprove() {
+        return this.userService.getRegistersRequestsWaitingForApprove();
+    }
+
+    @GetMapping("/active")
+    public List<UserProfileDTO> getActiveUsers(Principal principal) {
+        return this.userService.getUsersByStatus(principal, true);
+    }
+
+    @GetMapping("/inactive")
+    public List<UserProfileDTO> getInactiveUsers(Principal principal) {
+        return this.userService.getUsersByStatus(principal, false);
     }
 
 }
