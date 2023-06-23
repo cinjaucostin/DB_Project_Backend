@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.service;
 
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
+import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
@@ -59,5 +60,4 @@ public class PostsService {
         }
 
     }
-
 }

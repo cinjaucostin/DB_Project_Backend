@@ -30,7 +30,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin
-public class AuthenticationController {
+public class
+AuthenticationController {
 
     @Autowired
     private UserService userService;

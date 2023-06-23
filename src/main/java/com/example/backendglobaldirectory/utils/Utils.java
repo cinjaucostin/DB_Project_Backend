@@ -12,6 +12,7 @@ public class Utils {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String ANNIVERSARY_EMAIL_PATTERN_PATH = "src/main/resources/anniversary_mail_pattern.txt";
+    private static final String PROMOTION_EMAIL_PATTERN_PATH = "src/main/resources/promotion_mail_pattern.txt";
     public static final String REJECT_EMAIL_PATTERN_PATH = "src/main/resources/reject_mail_pattern.txt";
     public static final String APPROVE_EMAIL_PATTERN_PATH = "src/main/resources/approve_mail_pattern.txt";
 
@@ -52,6 +53,9 @@ public class Utils {
         return readMailPattern(ANNIVERSARY_EMAIL_PATTERN_PATH);
     }
 
+    public static String readPromotionMailPattern() throws FileNotFoundException {
+        return readMailPattern(PROMOTION_EMAIL_PATTERN_PATH);
+    }
     public static String readRejectMailPattern() throws FileNotFoundException {
         return readMailPattern(REJECT_EMAIL_PATTERN_PATH);
     }

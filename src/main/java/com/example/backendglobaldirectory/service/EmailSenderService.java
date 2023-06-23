@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +56,7 @@ public class EmailSenderService {
 
         this.tokenRepository.save(token);
 
-        String link = "http://localhost:3000/resetPassword?token=" + jwtToken;
+        String link = "http://localhost:4200/reset-password?token=" + jwtToken;
 
         String subject = "Reset password";
         String body = "Dear user ,\n"
@@ -76,6 +75,18 @@ public class EmailSenderService {
                 anniversaryMailFormat,
                 user.getFirstName() + " " + user.getLastName(),
                 noOfYears);
+
+        sendEmail(user.getEmail(), "Anniversary email", emailBody);
+    }
+
+    public void sendPromotionEmailToUser(User user, String newJobTitle)
+            throws FileNotFoundException {
+        String promotionMailFormat = Utils.readPromotionMailPattern();
+
+        String emailBody = String.format(
+                promotionMailFormat,
+                user.getFirstName() + " " + user.getLastName(),
+                newJobTitle);
 
         sendEmail(user.getEmail(), "Anniversary email", emailBody);
     }
