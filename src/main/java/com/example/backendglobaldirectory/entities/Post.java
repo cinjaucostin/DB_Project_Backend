@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -34,6 +35,10 @@ public class Post {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @Schema(description = "The user associated with the post. Each post has only one user.")
     private User user;
+
+    @OneToMany(mappedBy = "post")
+    @Schema(description = "Each post can have multiple comments.")
+    private List<Comment> comments;
 
     public Post(PostType type, String text, LocalDateTime timestamp, User user) {
         this.type = type;

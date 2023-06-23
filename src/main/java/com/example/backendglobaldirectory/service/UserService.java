@@ -128,7 +128,8 @@ public class UserService implements UserDetailsService {
     public List<UserProfileDTO> getUsersByStatus(Principal principal, boolean active) {
         return UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByActive(active))
                 .stream().filter((userProfileDTO -> !Objects.equals(userProfileDTO.getRole(), Roles.ADMIN.name())
-                        && !Objects.equals(userProfileDTO.getEmail(), principal.getName()))).toList();
+                        && !Objects.equals(userProfileDTO.getEmail(), principal.getName())
+                        && userProfileDTO.isApproved())).toList();
     }
 
     public UserProfileDTO getUserProfileById(int id) {

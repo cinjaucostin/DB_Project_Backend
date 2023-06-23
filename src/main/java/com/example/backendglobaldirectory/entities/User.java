@@ -25,10 +25,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @Schema(description = "The email used for authentication and email service.")
     private String email;
 
+    @Column(nullable = false)
     @Schema(description = "The password which will be stored in database in encrypted format using BCrypt.")
     private String password;
 
@@ -84,6 +85,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @Schema(description = "Each user can have multiple tokens: generated for auth or forgot password.")
     private List<Token> tokens;
+
+    @OneToMany(mappedBy = "user")
+    @Schema(description = "Each user can have multiple comments.")
+    private List<Comment> comments;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

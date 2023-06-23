@@ -1,8 +1,12 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.entities.Post;
+import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.Token;
+import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +26,18 @@ public class TokenService {
         }));
 
         tokenRepository.saveAll(tokensToRevoke);
+    }
+
+    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")
+    public void deleteAllExpiredOrRevokedTokensFromDatabase() {
+        List<Token> tokens = this.tokenRepository.findAll();
+
+        tokens.forEach(token -> {
+            if(token.isRevoked() || token.isExpired()) {
+                this.tokenRepository.delete(token);
+            }
+        });
+
     }
 
 }
