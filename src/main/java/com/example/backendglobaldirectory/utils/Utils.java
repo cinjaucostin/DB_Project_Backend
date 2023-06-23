@@ -32,7 +32,7 @@ public class Utils {
         return Optional.of(dateTime);
     }
 
-    public static String readMailPattern(String filePath) throws FileNotFoundException {
+    public static String readMailPattern(String filePath) {
         StringBuilder mailFormatBuilder = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -43,16 +43,17 @@ public class Utils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return mailFormatBuilder.toString();
     }
 
-    public static String readAnniversaryMailPattern() throws FileNotFoundException {
+    public static String readAnniversaryMailPattern() {
         return readMailPattern(ANNIVERSARY_EMAIL_PATTERN_PATH);
     }
 
-    public static String readRejectMailPattern() throws FileNotFoundException {
+    public static String readRejectMailPattern() {
         return readMailPattern(REJECT_EMAIL_PATTERN_PATH);
     }
 

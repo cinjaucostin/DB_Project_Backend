@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -68,8 +69,7 @@ public class EmailSenderService {
         return sendEmail(email, subject, body);
     }
 
-    public void sendAnniversaryEmailToUser(User user, int noOfYears)
-            throws FileNotFoundException {
+    public void sendAnniversaryEmailToUser(User user, int noOfYears) {
         String anniversaryMailFormat = Utils.readAnniversaryMailPattern();
 
         String emailBody = String.format(
@@ -80,9 +80,12 @@ public class EmailSenderService {
         sendEmail(user.getEmail(), "Anniversary email", emailBody);
     }
 
-    public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO)
-            throws FileNotFoundException {
+    public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO) {
         String rejectMailFormat = Utils.readRejectMailPattern();
+
+        if(rejectMailFormat == null) {
+            return;
+        }
 
         String emailBody = String.format(
                 rejectMailFormat,
@@ -98,6 +101,10 @@ public class EmailSenderService {
             throws FileNotFoundException {
         String approvedMailFormat = Utils.readApproveMailPattern();
 
+        if(approvedMailFormat == null) {
+            return;
+        }
+
         String emailBody = String.format(
                 approvedMailFormat,
                 user.getFirstName() + " " + user.getLastName()
@@ -106,7 +113,7 @@ public class EmailSenderService {
         sendEmail(user.getEmail(), "Register request approved", emailBody);
     }
 
-
+    @Async
     public String sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
