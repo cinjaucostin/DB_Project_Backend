@@ -33,10 +33,8 @@ public class ForgotPasswordController {
             throws ThePasswordsDoNotMatchException, UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            // Extract the username from the authentication object
             String email = authentication.getName();
             System.out.println(email);
-            // Do something with the username
             return this.userService.changePassword(forgotPasswordDTO, email);
         }
         return new ResponseEntity<>(

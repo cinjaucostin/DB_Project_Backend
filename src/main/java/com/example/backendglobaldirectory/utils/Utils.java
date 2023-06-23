@@ -12,6 +12,7 @@ public class Utils {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String ANNIVERSARY_EMAIL_PATTERN_PATH = "src/main/resources/anniversary_mail_pattern.txt";
+    private static final String PROMOTION_EMAIL_PATTERN_PATH = "src/main/resources/promotion_mail_pattern.txt";
 
     public static Optional<LocalDateTime> convertDateStringToLocalDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -50,4 +51,7 @@ public class Utils {
         return readMailPattern(ANNIVERSARY_EMAIL_PATTERN_PATH);
     }
 
+    public static String readPromotionMailPattern() throws FileNotFoundException {
+        return readMailPattern(PROMOTION_EMAIL_PATTERN_PATH);
+    }
 }
