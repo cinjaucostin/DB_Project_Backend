@@ -30,7 +30,7 @@ public class PostsService {
     private EmailSenderService emailSenderService;
 
     // Se executa in fiecare zi la 12:01 AM(ora Romaniei)
-    @Scheduled(cron = "0 13 12 * * *", zone = "Europe/Bucharest")
+    @Scheduled(cron = "0 0 18 * * *", zone = "Europe/Bucharest")
     public void generateAnniversaryPosts() throws FileNotFoundException {
         List<User> users = this.userRepository.findAll();
 
@@ -38,7 +38,7 @@ public class PostsService {
             LocalDateTime dateOfEmployment = user.getDateOfEmployment();
             LocalDateTime now = LocalDateTime.now();
 
-            if(dateOfEmployment != null) {
+            if(dateOfEmployment != null && user.isActive()) {
                 if(dateOfEmployment.getMonth() == now.getMonth()
                         && dateOfEmployment.getDayOfMonth() == now.getDayOfMonth()) {
 

@@ -18,7 +18,7 @@ public class CommentDTO {
     private String text;
     private String timePassed;
 
-    public static CommentDTO fromCommentEntity(Comment comment) {
+    public static CommentDTO fromEntityToDTO(Comment comment) {
         User commentUser = comment.getUser();
         Post commentPost = comment.getPost();
 
@@ -27,19 +27,19 @@ public class CommentDTO {
         commentDTO.setUserId(commentUser.getId());
         commentDTO.setPostId(commentPost.getId());
         commentDTO.setText(comment.getText());
-        commentDTO.setUserFullName(commentUser.getFirstName()
-                + " "
-                + commentUser.getLastName()
+        commentDTO.setUserFullName(commentUser.getFirstName() +
+                " " +
+                commentUser.getLastName()
         );
         commentDTO.setTimePassed(Utils.getPeriodOfTimeFrom(comment.getTimestamp()));
         return commentDTO;
     }
 
-    public static List<CommentDTO> fromCommentListToCommentDTOList(List<Comment> comments) {
+    public static List<CommentDTO> fromEntityListToDTOList(List<Comment> comments) {
         List<CommentDTO> commentDTOS = new ArrayList<>();
 
         comments.forEach(comment -> {
-            commentDTOS.add(fromCommentEntity(comment));
+            commentDTOS.add(fromEntityToDTO(comment));
         });
 
         return commentDTOS;

@@ -1,6 +1,7 @@
 package com.example.backendglobaldirectory.dto;
 
 import com.example.backendglobaldirectory.entities.Comment;
+import com.example.backendglobaldirectory.entities.Like;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.utils.Utils;
@@ -23,6 +24,7 @@ public class PostDTO {
     public static PostDTO fromEntityToDTO(Post post) {
         User postUser = post.getUser();
         List<Comment> comments = post.getComments();
+        List<Like> likes = post.getLikes();
 
         PostDTO postDTO = new PostDTO();
         postDTO.postId = post.getId();
@@ -30,9 +32,9 @@ public class PostDTO {
         postDTO.userFullName = postUser.getFirstName() + " " + postUser.getLastName();
         postDTO.timePeriod = Utils.getPeriodOfTimeFrom(post.getTimestamp());
         postDTO.type = post.getType().name();
-        postDTO.nrOfLikes = 0;
+        postDTO.nrOfLikes = likes.size();
         postDTO.nrOfComments = comments.size();
-        postDTO.comments = CommentDTO.fromCommentListToCommentDTOList(comments);
+        postDTO.comments = CommentDTO.fromEntityListToDTOList(comments);
 
         return postDTO;
     }

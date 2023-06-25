@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout")
                         .authenticated()
-                        .requestMatchers("/api/users/**", "/api/reactions/comments/**")
+                        .requestMatchers("/api/users/**", "/api/reactions/**")
                         .authenticated()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->
