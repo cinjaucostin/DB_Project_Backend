@@ -18,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +63,11 @@ public class AuthenticationService {
         }
 
         User newUser = RegisterDTO.toUserEntity(registerDTO, passwordEncoder);
+
+        if(newUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
         Image profileImage = ImageDTO.toImageEntity(registerDTO.getImage());
         newUser.setProfileImage(profileImage);
 
@@ -105,7 +109,5 @@ public class AuthenticationService {
 
         return new ResponseEntity<>(new LoginResponse(user.getId(), jwtToken), HttpStatus.OK);
     }
-
-
 
 }

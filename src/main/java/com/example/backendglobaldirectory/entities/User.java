@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,10 +26,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @Schema(description = "The email used for authentication and email service.")
     private String email;
 
+    @Column(nullable = false)
     @Schema(description = "The password which will be stored in database in encrypted format using BCrypt.")
     private String password;
 
@@ -82,8 +84,24 @@ public class User implements UserDetails {
     private String jobTitle;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     @Schema(description = "Each user can have multiple tokens: generated for auth or forgot password.")
     private List<Token> tokens;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @Schema(description = "Each user can have multiple posts associated.")
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @Schema(description = "Each user can have multiple comments.")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @Schema(description = "Each user can have multiple likes.")
+    private List<Like> likes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

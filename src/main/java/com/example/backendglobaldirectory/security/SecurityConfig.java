@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,6 +53,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/sendEmail")
                         .permitAll()
@@ -62,11 +64,11 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/users/registerRequests", "/api/users/inactive")
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/posts", "/api/users/active")
+                        .requestMatchers("/api/posts", "/api/users/active", "/api/reactions/comments")
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout")
                         .authenticated()
-                        .requestMatchers("/api/users/**")
+                        .requestMatchers("/api/users/**", "/api/reactions/**")
                         .authenticated()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->

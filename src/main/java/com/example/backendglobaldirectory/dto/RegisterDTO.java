@@ -37,6 +37,10 @@ public class RegisterDTO {
                 registerDTO.getDateOfEmployment()
         ).orElseThrow(() -> new InvalidInputException("Wrong date of employment."));
 
+        if(registerDTO.getEmail() == null || registerDTO.getPassword() == null) {
+            return null;
+        }
+
         User newUser = new User();
         newUser.setEmail(registerDTO.getEmail());
         newUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
