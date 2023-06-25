@@ -35,7 +35,7 @@ public class EmailSenderService {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public String createEmail(String email)
+    public Map<String, String> createEmail(String email)
             throws UserNotFoundException {
         Optional<User> userOptional = this.userRepository.findByEmail(email);
 
@@ -93,7 +93,7 @@ public class EmailSenderService {
                 user.getFirstName() + " " + user.getLastName(),
                 newJobTitle);
 
-        sendEmail(user.getEmail(), "Anniversary email", emailBody);
+        sendEmail(user.getEmail(), "Promotion email", emailBody);
     }
 
     public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO) {
@@ -129,7 +129,7 @@ public class EmailSenderService {
     }
 
 
-    public String sendEmail(String toEmail, String subject, String body){
+    public Map<String, String> sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
@@ -138,7 +138,10 @@ public class EmailSenderService {
 
         mailSender.send(message);
 
-        return "Mail sent successfully.";
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Mail sent successfully.");
+
+        return response;
     }
 
 }

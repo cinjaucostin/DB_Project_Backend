@@ -16,6 +16,7 @@ public class Utils {
     private static final String PROMOTION_EMAIL_PATTERN_PATH = "src/main/resources/promotion_mail_pattern.txt";
     public static final String REJECT_EMAIL_PATTERN_PATH = "src/main/resources/reject_mail_pattern.txt";
     public static final String APPROVE_EMAIL_PATTERN_PATH = "src/main/resources/approve_mail_pattern.txt";
+    private static final String RESET_PASSWORD_EMAIL_PATTERN_PATH = "src/main/resources/reset_password_mail_pattern.txt";;
 
     public static Optional<LocalDateTime> convertDateStringToLocalDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -67,6 +68,10 @@ public class Utils {
         return readMailPattern(APPROVE_EMAIL_PATTERN_PATH);
     }
 
+    public static String readResetMailPattern() throws FileNotFoundException {
+        return readMailPattern(RESET_PASSWORD_EMAIL_PATTERN_PATH);
+    }
+
     public static String getPeriodOfTimeFrom(LocalDateTime initial) {
         Duration duration = Duration.between(
                 initial,
@@ -90,5 +95,6 @@ public class Utils {
 
         return periodStringBuilder.toString();
     }
+
 
 }

@@ -31,7 +31,7 @@ public class UpdateProfileController {
             return this.updateProfileService.updateProfile(profileDTO, email);
         }
         return new ResponseEntity<>(
-                new ResponseDTO("Wrong Token!"),
+                new ResponseDTO("Correct Token!"),
                 HttpStatus.OK
         );
 

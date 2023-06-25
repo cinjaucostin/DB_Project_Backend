@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin
 public class ForgotPasswordController {
@@ -38,15 +40,16 @@ public class ForgotPasswordController {
             return this.userService.changePassword(forgotPasswordDTO, email);
         }
         return new ResponseEntity<>(
-                new ResponseDTO("Wrong Token!"),
+                new ResponseDTO("Correct Token!"),
                 HttpStatus.OK
         );
     }
 
     @PostMapping("/sendEmail")
-    public ResponseEntity<String> register(@RequestBody SendEmailDTO sendEmailDTO)
+    public ResponseEntity<Map<String, String>> register(@RequestBody SendEmailDTO sendEmailDTO)
             throws UserNotFoundException {
-        return new ResponseEntity<>(this.emailSenderService.createEmail(sendEmailDTO.getEmail()), HttpStatus.OK);
+        Map<String, String> response = this.emailSenderService.createEmail(sendEmailDTO.getEmail());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
