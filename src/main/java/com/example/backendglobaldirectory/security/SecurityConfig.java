@@ -64,11 +64,11 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/users/registerRequests", "/api/users/inactive")
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/posts", "/api/users/active")
+                        .requestMatchers("/api/posts", "/api/users/active", "/api/reactions/comments")
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout")
                         .authenticated()
-                        .requestMatchers("/api/users/**")
+                        .requestMatchers("/api/users/**", "/api/reactions/**")
                         .authenticated()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->

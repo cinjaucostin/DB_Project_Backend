@@ -1,6 +1,7 @@
 package com.example.backendglobaldirectory.utils;
 
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,7 +34,7 @@ public class Utils {
         return Optional.of(dateTime);
     }
 
-    public static String readMailPattern(String filePath) throws FileNotFoundException {
+    public static String readMailPattern(String filePath) {
         StringBuilder mailFormatBuilder = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -44,24 +45,50 @@ public class Utils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return mailFormatBuilder.toString();
     }
 
-    public static String readAnniversaryMailPattern() throws FileNotFoundException {
+    public static String readAnniversaryMailPattern() {
         return readMailPattern(ANNIVERSARY_EMAIL_PATTERN_PATH);
     }
 
-    public static String readPromotionMailPattern() throws FileNotFoundException {
+    public static String readPromotionMailPattern() {
         return readMailPattern(PROMOTION_EMAIL_PATTERN_PATH);
     }
-    public static String readRejectMailPattern() throws FileNotFoundException {
+
+    public static String readRejectMailPattern() {
         return readMailPattern(REJECT_EMAIL_PATTERN_PATH);
     }
 
-    public static String readApproveMailPattern() throws FileNotFoundException {
+    public static String readApproveMailPattern() {
         return readMailPattern(APPROVE_EMAIL_PATTERN_PATH);
+    }
+
+    public static String getPeriodOfTimeFrom(LocalDateTime initial) {
+        Duration duration = Duration.between(
+                initial,
+                LocalDateTime.now()
+        );
+
+        StringBuilder periodStringBuilder = new StringBuilder();
+
+        long minutes = duration.toMinutes();
+
+        if(minutes < 60) {
+            periodStringBuilder.append(minutes);
+            periodStringBuilder.append(" m");
+        } else if(minutes >= 60 && minutes <= 1440) {
+            periodStringBuilder.append(duration.toHours());
+            periodStringBuilder.append(" h");
+        } else if(minutes > 1440) {
+            periodStringBuilder.append(duration.toDays());
+            periodStringBuilder.append(" d");
+        }
+
+        return periodStringBuilder.toString();
     }
 
 }
