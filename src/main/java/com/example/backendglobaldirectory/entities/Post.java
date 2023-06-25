@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,12 +34,17 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnore
     @Schema(description = "The user associated with the post. Each post has only one user.")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "Each post can have multiple comments.")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Schema(description = "Each post can have multiple likes.")
+    private List<Like> likes;
 
     public Post(PostType type, String text, LocalDateTime timestamp, User user) {
         this.type = type;

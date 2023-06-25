@@ -1,15 +1,15 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.CommentDTO;
+import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
-import com.example.backendglobaldirectory.utils.Utils;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class PostsService {
     private EmailSenderService emailSenderService;
 
     // Se executa in fiecare zi la 12:01 AM(ora Romaniei)
-    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")
+    @Scheduled(cron = "0 13 12 * * *", zone = "Europe/Bucharest")
     public void generateAnniversaryPosts() throws FileNotFoundException {
         List<User> users = this.userRepository.findAll();
 
@@ -53,11 +53,37 @@ public class PostsService {
 
                     this.postRepository.save(post);
 
-                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
+//                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
                 }
             }
 
         }
 
     }
+
+    public List<PostDTO> getPostsFilteredBy(Integer uid)
+            throws ResourceNotFoundException {
+        if(uid != null) {
+            return getPostsByUserId(uid);
+        }
+
+        return getAllPosts();
+    }
+
+    private List<PostDTO> getAllPosts() {
+        return PostDTO.fromEntityListToDTOList(
+                this.postRepository.findAll()
+        );
+    }
+
+    private List<PostDTO> getPostsByUserId(Integer uid)
+            throws ResourceNotFoundException {
+        User user = this.userRepository.findById(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+
+        return PostDTO.fromEntityListToDTOList(
+                user.getPosts()
+        );
+    }
+
 }

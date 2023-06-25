@@ -28,7 +28,7 @@ public class TokenService {
         tokenRepository.saveAll(tokensToRevoke);
     }
 
-    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")
+    @Scheduled(cron = "0 1 14 * * *", zone = "Europe/Bucharest")
     public void deleteAllExpiredOrRevokedTokensFromDatabase() {
         List<Token> tokens = this.tokenRepository.findAll();
 

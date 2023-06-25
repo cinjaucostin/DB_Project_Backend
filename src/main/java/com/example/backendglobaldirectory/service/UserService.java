@@ -58,10 +58,10 @@ public class UserService implements UserDetailsService {
             user.setApproved(true);
             user.setActive(true);
             this.userRepository.save(user);
-            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
+//            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
         } else {
             this.userRepository.deleteById(user.getId());
-            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
+//            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
         }
 
         return new ResponseEntity<>(
