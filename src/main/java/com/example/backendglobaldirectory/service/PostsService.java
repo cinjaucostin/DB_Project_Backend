@@ -30,7 +30,7 @@ public class PostsService {
     private EmailSenderService emailSenderService;
 
     // Se executa in fiecare zi la 12:01 AM(ora Romaniei)
-    @Scheduled(cron = "0 0 18 * * *", zone = "Europe/Bucharest")
+    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")
     public void generateAnniversaryPosts() throws FileNotFoundException {
         List<User> users = this.userRepository.findAll();
 
