@@ -1,6 +1,6 @@
 package com.example.backendglobaldirectory.service;
 
-import com.example.backendglobaldirectory.dto.PostDTO;
+import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
@@ -27,7 +27,7 @@ public class PostsService {
     @Autowired
     private EmailSenderService emailSenderService;
 
-    public void createPost(String email, PostDTO createPostDTO) {
+    public void createPost(String email, CreatePostDTO createPostDTO) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent())   {
             Post post = new Post(createPostDTO.getType(), createPostDTO.getText(), LocalDateTime.now(), user.get());

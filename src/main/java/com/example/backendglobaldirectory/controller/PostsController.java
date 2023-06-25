@@ -1,7 +1,6 @@
 package com.example.backendglobaldirectory.controller;
 
-import com.example.backendglobaldirectory.dto.PostDTO;
-import com.example.backendglobaldirectory.dto.ProfileDTO;
+import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -14,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,7 +32,7 @@ public class PostsController {
     }
 
     @PostMapping("/createPost")
-    public ResponseEntity<ResponseDTO> createPost(@RequestBody PostDTO createPostDTO) throws UserNotFoundException {
+    public ResponseEntity<ResponseDTO> createPost(@RequestBody CreatePostDTO createPostDTO) throws UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
