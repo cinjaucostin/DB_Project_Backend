@@ -1,21 +1,19 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
-import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
-import com.example.backendglobaldirectory.utils.Utils;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostsService {
@@ -28,6 +26,14 @@ public class PostsService {
 
     @Autowired
     private EmailSenderService emailSenderService;
+
+    public void createPost(String email, PostDTO createPostDTO) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent())   {
+            Post post = new Post(createPostDTO.getType(), createPostDTO.getText(), LocalDateTime.now(), user.get());
+            postRepository.save(post);
+        }
+    }
 
     // Se executa in fiecare zi la 12:01 AM(ora Romaniei)
     @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")

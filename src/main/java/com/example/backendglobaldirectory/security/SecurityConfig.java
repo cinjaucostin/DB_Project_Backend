@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/sendEmail")
                         .permitAll()
-                        .requestMatchers( "/reset", "/update")
+                        .requestMatchers( "/reset", "/update", "/createPost")
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/reject",
                                 "/api/users/activate", "/api/users/inactivate")

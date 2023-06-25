@@ -55,6 +55,8 @@ public class UpdateProfileService {
         if (!Objects.equals(profileDTO.getJobTitle(), user.getJobTitle())  && profileDTO.getJobTitle() != null) {
             user.setJobTitle(profileDTO.getJobTitle());
 
+            String newJobTitle = profileDTO.getJobTitle();
+
             Post post = new Post(
                     PostType.PROMOTION_POST,
                     "Congratulation for promotion to " + profileDTO.getJobTitle(),
@@ -63,8 +65,6 @@ public class UpdateProfileService {
             );
 
             this.postsRepository.save(post);
-
-            String newJobTitle = profileDTO.getJobTitle();
 
             this.emailSenderService.sendPromotionEmailToUser(user, newJobTitle);
         }
@@ -91,10 +91,8 @@ public class UpdateProfileService {
 
         userRepository.save(user);
 
-
-
         return new ResponseEntity<>(
-                new ResponseDTO("Wrong Token!"),
+                new ResponseDTO("Correct Token!"),
                 HttpStatus.OK
         );
     }
