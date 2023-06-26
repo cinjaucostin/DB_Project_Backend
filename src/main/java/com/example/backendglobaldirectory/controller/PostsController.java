@@ -2,12 +2,10 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 
-import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

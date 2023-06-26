@@ -1,11 +1,14 @@
 package com.example.backendglobaldirectory.service;
 
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
+import com.example.backendglobaldirectory.dto.ImageDTO;
 import com.example.backendglobaldirectory.dto.PostDTO;
+import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
+import com.example.backendglobaldirectory.repository.ImageRepository;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +32,18 @@ public class PostsService {
     @Autowired
     private EmailSenderService emailSenderService;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
+
     public void createPost(String email, CreatePostDTO createPostDTO) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent())   {
-            Post post = new Post(PostType.MANUAL_POST, createPostDTO.getText(), LocalDateTime.now(), user.get());
+            System.out.println(createPostDTO.getPostImage().getName());
+            Image image = ImageDTO.toImageEntity(createPostDTO.getPostImage());
+            System.out.println(image.getName());
+            imageRepository.save(image);
+            Post post = new Post(PostType.MANUAL_POST, createPostDTO.getText(), image, LocalDateTime.now(), user.get());
             postRepository.save(post);
         }
     }

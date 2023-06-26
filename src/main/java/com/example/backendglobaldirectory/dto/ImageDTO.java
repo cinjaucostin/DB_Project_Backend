@@ -22,4 +22,12 @@ public class ImageDTO {
 
     }
 
+    public static ImageDTO fromEntity(Image image) {
+        ImageDTO imageDTO = new ImageDTO();
+        imageDTO.setName(image.getName());
+        imageDTO.setType(image.getType());
+        imageDTO.setBase64Img(image.getImageEncoded());
+        return imageDTO;
+    }
+
 }

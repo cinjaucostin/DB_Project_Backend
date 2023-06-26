@@ -17,6 +17,8 @@ public class PostDTO {
     private String userFullName;
     private String timePeriod;
     private String type;
+
+    private ImageDTO postImage;
     private int nrOfLikes;
     private int nrOfComments;
     private List<CommentDTO> comments;
@@ -32,6 +34,7 @@ public class PostDTO {
         postDTO.userFullName = postUser.getFirstName() + " " + postUser.getLastName();
         postDTO.timePeriod = Utils.getPeriodOfTimeFrom(post.getTimestamp());
         postDTO.type = post.getType().name();
+        postDTO.setPostImage(ImageDTO.fromEntity(post.getImage()));
         postDTO.nrOfLikes = likes.size();
         postDTO.nrOfComments = comments.size();
         postDTO.comments = CommentDTO.fromEntityListToDTOList(comments);
