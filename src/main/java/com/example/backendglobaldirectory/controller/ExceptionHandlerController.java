@@ -1,10 +1,8 @@
 package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.exception.EmailAlreadyUsedException;
-import com.example.backendglobaldirectory.exception.InvalidInputException;
-import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
-import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import com.example.backendglobaldirectory.exception.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +35,16 @@ public class ExceptionHandlerController {
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<ResponseDTO> catchInvalidInputException(InvalidInputException e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessAnotherUserResourcesException.class)
+    public ResponseEntity<ResponseDTO> catchAccessAnotherUserResourceException(AccessAnotherUserResourcesException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ResponseDTO> catchDuplicateResourceException(DuplicateResourceException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)

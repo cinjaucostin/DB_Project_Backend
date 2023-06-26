@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +35,7 @@ public class EmailSenderService {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public String createEmail(String email)
+    public Map<String, String> createEmail(String email)
             throws UserNotFoundException {
         Optional<User> userOptional = this.userRepository.findByEmail(email);
 
@@ -57,7 +55,7 @@ public class EmailSenderService {
 
         this.tokenRepository.save(token);
 
-        String link = "http://localhost:3000/resetPassword?token=" + jwtToken;
+        String link = "http://localhost:4200/reset-password?token=" + jwtToken;
 
         String subject = "Reset password";
         String body = "Dear user ,\n"
@@ -68,9 +66,12 @@ public class EmailSenderService {
         return sendEmail(email, subject, body);
     }
 
-    public void sendAnniversaryEmailToUser(User user, int noOfYears)
-            throws FileNotFoundException {
+    public void sendAnniversaryEmailToUser(User user, int noOfYears) {
         String anniversaryMailFormat = Utils.readAnniversaryMailPattern();
+
+        if(anniversaryMailFormat == null) {
+            return;
+        }
 
         String emailBody = String.format(
                 anniversaryMailFormat,
@@ -80,9 +81,27 @@ public class EmailSenderService {
         sendEmail(user.getEmail(), "Anniversary email", emailBody);
     }
 
-    public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO)
-            throws FileNotFoundException {
+    public void sendPromotionEmailToUser(User user, String newJobTitle) {
+        String promotionMailFormat = Utils.readPromotionMailPattern();
+
+        if(promotionMailFormat == null) {
+            return;
+        }
+
+        String emailBody = String.format(
+                promotionMailFormat,
+                user.getFirstName() + " " + user.getLastName(),
+                newJobTitle);
+
+        sendEmail(user.getEmail(), "Promotion email", emailBody);
+    }
+
+    public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO) {
         String rejectMailFormat = Utils.readRejectMailPattern();
+
+        if(rejectMailFormat == null) {
+            return;
+        }
 
         String emailBody = String.format(
                 rejectMailFormat,
@@ -94,9 +113,12 @@ public class EmailSenderService {
         sendEmail(user.getEmail(), "Register request rejected", emailBody);
     }
 
-    public void sendApprovedNotificationEmailToUser(User user)
-            throws FileNotFoundException {
+    public void sendApprovedNotificationEmailToUser(User user) {
         String approvedMailFormat = Utils.readApproveMailPattern();
+
+        if(approvedMailFormat == null) {
+            return;
+        }
 
         String emailBody = String.format(
                 approvedMailFormat,
@@ -107,7 +129,7 @@ public class EmailSenderService {
     }
 
 
-    public String sendEmail(String toEmail, String subject, String body){
+    public Map<String, String> sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
@@ -116,6 +138,10 @@ public class EmailSenderService {
 
         mailSender.send(message);
 
-        return "Mail sent successfully.";
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Mail sent successfully.");
+
+        return response;
     }
+
 }

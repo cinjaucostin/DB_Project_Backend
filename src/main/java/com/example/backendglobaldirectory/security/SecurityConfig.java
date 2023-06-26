@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,22 +53,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/sendEmail")
                         .permitAll()
-                        .requestMatchers( "/reset")
+                        .requestMatchers( "/reset", "/update", "/createPost")
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/reject",
                                 "/api/users/activate", "/api/users/inactivate")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/users/registerRequests", "/api/users/inactive")
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/posts", "/api/users/active")
+                        .requestMatchers("/api/posts", "/api/users/active", "/api/reactions/comments")
                         .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout")
                         .authenticated()
-                        .requestMatchers("/api/users/**")
+                        .requestMatchers("/api/users/**", "/api/reactions/**")
                         .authenticated()
+                        .requestMatchers( "/reset", "/update")
+                        .permitAll()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->
                         logoutConfigurer

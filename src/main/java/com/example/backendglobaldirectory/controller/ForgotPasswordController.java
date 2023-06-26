@@ -15,8 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class ForgotPasswordController {
     @Autowired
     private UserService userService;
@@ -27,28 +29,27 @@ public class ForgotPasswordController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @PatchMapping("/reset")
     public ResponseEntity<ResponseDTO> register(@RequestBody ForgotPasswordDTO forgotPasswordDTO)
             throws ThePasswordsDoNotMatchException, UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            // Extract the username from the authentication object
             String email = authentication.getName();
             System.out.println(email);
-            // Do something with the username
             return this.userService.changePassword(forgotPasswordDTO, email);
         }
         return new ResponseEntity<>(
-                new ResponseDTO("Wrong Token!"),
+                new ResponseDTO("Correct Token!"),
                 HttpStatus.OK
         );
     }
 
     @PostMapping("/sendEmail")
-    public ResponseEntity<String> register(@RequestBody SendEmailDTO sendEmailDTO)
+    public ResponseEntity<Map<String, String>> register(@RequestBody SendEmailDTO sendEmailDTO)
             throws UserNotFoundException {
-        return new ResponseEntity<>(this.emailSenderService.createEmail(sendEmailDTO.getEmail()), HttpStatus.OK);
+        Map<String, String> response = this.emailSenderService.createEmail(sendEmailDTO.getEmail());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
