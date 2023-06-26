@@ -6,6 +6,7 @@ import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchExcept
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import com.example.backendglobaldirectory.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
+import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,11 +33,21 @@ public class ResetPasswordServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    private String newPassword;
+
+    @BeforeEach
+    public void setup() throws IOException {
+        Properties properties = new Properties();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties");
+        properties.load(inputStream);
+        newPassword = properties.getProperty("newPassword");
+    }
+
     @Test
     public void changePasswordOfExistingUserTest() throws ThePasswordsDoNotMatchException, UserNotFoundException {
-        String email = "miruna@gamil.com";
-        String password = "newPassword";
-        String confirmPassword = "newPassword";
+        String email = "miruna@gmail.com";
+        String password = newPassword;
+        String confirmPassword = newPassword;
 
         ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO();
         forgotPasswordDTO.setPassword(password);
@@ -58,10 +72,9 @@ public class ResetPasswordServiceTest {
 
     @Test
     public void changePasswordOfNotExistingUserTest() throws ThePasswordsDoNotMatchException, UserNotFoundException {
-        // Prepare test data
-        String email = "miruna@gamil.com";
-        String password = "newPassword";
-        String confirmPassword = "newPassword";
+        String email = "miruna@gmail.com";
+        String password = newPassword;
+        String confirmPassword = newPassword;
 
         ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO();
         forgotPasswordDTO.setPassword(password);

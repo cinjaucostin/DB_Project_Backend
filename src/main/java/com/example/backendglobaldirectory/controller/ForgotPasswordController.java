@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 @RestController
@@ -47,7 +48,7 @@ public class ForgotPasswordController {
 
     @PostMapping("/sendEmail")
     public ResponseEntity<Map<String, String>> register(@RequestBody SendEmailDTO sendEmailDTO)
-            throws UserNotFoundException {
+            throws UserNotFoundException, FileNotFoundException {
         Map<String, String> response = this.emailSenderService.createEmail(sendEmailDTO.getEmail());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

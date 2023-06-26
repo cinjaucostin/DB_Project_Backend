@@ -1,10 +1,7 @@
 package com.example.backendglobaldirectory.service;
 
-
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
-import com.example.backendglobaldirectory.dto.CommentDTO;
 import com.example.backendglobaldirectory.dto.PostDTO;
-
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +32,7 @@ public class PostsService {
     public void createPost(String email, CreatePostDTO createPostDTO) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent())   {
-            Post post = new Post(createPostDTO.getType(), createPostDTO.getText(), LocalDateTime.now(), user.get());
+            Post post = new Post(PostType.MANUAL_POST, createPostDTO.getText(), LocalDateTime.now(), user.get());
             postRepository.save(post);
         }
     }

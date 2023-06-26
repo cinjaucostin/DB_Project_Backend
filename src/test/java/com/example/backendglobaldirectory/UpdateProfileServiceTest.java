@@ -37,7 +37,7 @@ public class UpdateProfileServiceTest {
     private EmailSenderService emailSenderService;
 
     @Test
-    public void testUpdateProfile_Success() throws UserNotFoundException, FileNotFoundException {
+    public void updateProfileOfExistingUserTest() throws UserNotFoundException, FileNotFoundException {
         String email = "miruna@gmail.com";
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setFirstName("Miruna");
@@ -60,7 +60,7 @@ public class UpdateProfileServiceTest {
     }
 
     @Test
-    public void testUpdateProfile_UserNotFound() throws UserNotFoundException, FileNotFoundException {
+    public void updateProfileOfNotExistingUserTest() throws UserNotFoundException, FileNotFoundException {
         String email = "miruna@gmail.com";
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setFirstName("Miruna");
