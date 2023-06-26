@@ -4,6 +4,7 @@ import com.example.backendglobaldirectory.dto.*;
 import com.example.backendglobaldirectory.entities.Comment;
 import com.example.backendglobaldirectory.entities.Like;
 import com.example.backendglobaldirectory.exception.AccessAnotherUserResourcesException;
+import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 import com.example.backendglobaldirectory.service.ReactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,11 @@ public class ReactionsController {
         return this.reactionsService.getCommentsFilteredBy(pid, uid, principal);
     }
 
-    @GetMapping("/comments/count")
-    public ResponseEntity<PostStatsDTO> countStatsForPost(@RequestParam Integer pid)
+    @GetMapping("/count")
+    public ResponseEntity<PostStatsDTO> countStatsForPost(@RequestParam Integer pid,
+                                                          @RequestParam Integer uid)
             throws ResourceNotFoundException {
-        return this.reactionsService.countStatsForPost(pid);
+        return this.reactionsService.countStatsForPost(pid, uid);
     }
 
     @GetMapping("/likes")
@@ -55,7 +57,7 @@ public class ReactionsController {
     public ResponseEntity<Like> addLikeToPostFromUser(
             @RequestBody AddLikeDTO addLikeDTO,
             Principal principal)
-            throws ResourceNotFoundException, AccessAnotherUserResourcesException {
+            throws ResourceNotFoundException, AccessAnotherUserResourcesException, DuplicateResourceException {
         return this.reactionsService.addLikeToPostFromUser(addLikeDTO, principal);
     }
 

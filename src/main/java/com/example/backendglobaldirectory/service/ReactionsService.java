@@ -6,6 +6,7 @@ import com.example.backendglobaldirectory.entities.Like;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.AccessAnotherUserResourcesException;
+import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 import com.example.backendglobaldirectory.repository.CommentRepository;
 import com.example.backendglobaldirectory.repository.LikeRepository;
@@ -60,9 +61,8 @@ public class ReactionsService {
         return new ResponseEntity<>(commentSaved, HttpStatus.OK);
     }
 
-
     public ResponseEntity<Like> addLikeToPostFromUser(AddLikeDTO addLikeDTO, Principal principal)
-            throws ResourceNotFoundException, AccessAnotherUserResourcesException {
+            throws ResourceNotFoundException, AccessAnotherUserResourcesException, DuplicateResourceException {
         User user = this.userRepository.findById(addLikeDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
@@ -74,6 +74,15 @@ public class ReactionsService {
 
         Post post = this.postsRepository.findById(addLikeDTO.getPostId())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
+
+        boolean userLikedPost = checkIfUserLikedPost(
+                addLikeDTO.getPostId(),
+                addLikeDTO.getUserId()
+        );
+
+        if(userLikedPost) {
+            throw new DuplicateResourceException("User already liked post.");
+        }
 
         Like like = new Like();
         like.setPost(post);
@@ -108,7 +117,7 @@ public class ReactionsService {
             throws ResourceNotFoundException, AccessAnotherUserResourcesException {
 
         Like like = this.likeRepository.findById(likeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Like not found!"));
 
         if(!like.getUser().getEmail().equals(principal.getName())) {
             throw new AccessAnotherUserResourcesException(
@@ -206,15 +215,32 @@ public class ReactionsService {
         );
     }
 
-    public ResponseEntity<PostStatsDTO> countStatsForPost(Integer pid) throws ResourceNotFoundException {
+    public ResponseEntity<PostStatsDTO> countStatsForPost(Integer pid, Integer uid)
+            throws ResourceNotFoundException {
         Post post = this.postsRepository.findById(pid)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
 
+        boolean userLikedPost = checkIfUserLikedPost(pid, uid);
+
         PostStatsDTO stats = new PostStatsDTO();
+        stats.setLiked(userLikedPost);
         stats.setPostId(post.getId());
         stats.setNrCommentaries(post.getComments().size());
         stats.setNrLikes(post.getLikes().size());
 
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
+
+    public boolean checkIfUserLikedPost(int pid, int uid)
+            throws ResourceNotFoundException {
+        Post post = this.postsRepository.findById(pid)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
+
+        return post.getLikes()
+                .stream()
+                .filter(like -> like.getUser().getId() == uid)
+                .toList()
+                .size() == 1;
+    }
+
 }

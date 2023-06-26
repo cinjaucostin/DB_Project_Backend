@@ -70,6 +70,8 @@ public class SecurityConfig {
                         .authenticated()
                         .requestMatchers("/api/users/**", "/api/reactions/**")
                         .authenticated()
+                        .requestMatchers( "/reset", "/update")
+                        .permitAll()
                         .anyRequest().permitAll())
                 .logout(logoutConfigurer ->
                         logoutConfigurer

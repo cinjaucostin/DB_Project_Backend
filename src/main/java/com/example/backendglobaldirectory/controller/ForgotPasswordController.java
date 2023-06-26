@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class ForgotPasswordController {
     @Autowired
     private UserService userService;
@@ -29,7 +29,7 @@ public class ForgotPasswordController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @PatchMapping("/reset")
     public ResponseEntity<ResponseDTO> register(@RequestBody ForgotPasswordDTO forgotPasswordDTO)
             throws ThePasswordsDoNotMatchException, UserNotFoundException {

@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.exception.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +40,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler(AccessAnotherUserResourcesException.class)
     public ResponseEntity<ResponseDTO> catchAccessAnotherUserResourceException(AccessAnotherUserResourcesException e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ResponseDTO> catchDuplicateResourceException(DuplicateResourceException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
