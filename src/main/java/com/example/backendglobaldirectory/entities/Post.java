@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class Post {
     private LocalDateTime timestamp;
 
     @ManyToOne
+    @JoinColumn(name = "image_id")
+    @JsonIgnore
+    @Schema(description = "The image associated with the post.")
+    private Image image;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnore
     @Schema(description = "The user associated with the post. Each post has only one user.")
@@ -53,4 +60,11 @@ public class Post {
         this.user = user;
     }
 
+    public Post(PostType type, String text, Image image, LocalDateTime timestamp, User user) {
+        this.type = type;
+        this.text = text;
+        this.image = image;
+        this.timestamp = timestamp;
+        this.user = user;
+    }
 }
