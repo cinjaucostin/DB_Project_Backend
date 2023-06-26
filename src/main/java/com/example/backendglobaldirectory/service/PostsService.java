@@ -1,5 +1,6 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,5 +61,4 @@ public class PostsService {
         }
 
     }
-
 }
