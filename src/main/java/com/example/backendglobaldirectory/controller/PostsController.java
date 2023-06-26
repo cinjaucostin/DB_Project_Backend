@@ -26,9 +26,6 @@ public class PostsController {
     @Autowired
     private PostsService postsService;
 
-    @Autowired
-    private PostsService postsService;
-
     @GetMapping
     public List<PostDTO> getPosts(@RequestParam(required = false) Integer uid)
             throws ResourceNotFoundException {
