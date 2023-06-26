@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class EmailSenderService {
     private TokenRepository tokenRepository;
 
     public Map<String, String> createEmail(String email)
-            throws UserNotFoundException {
+            throws UserNotFoundException, FileNotFoundException {
         Optional<User> userOptional = this.userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {
@@ -57,13 +58,14 @@ public class EmailSenderService {
 
         String link = "http://localhost:4200/reset-password?token=" + jwtToken;
 
-        String subject = "Reset password";
-        String body = "Dear user ,\n"
-                + "You have requested to reset your password. Please click the link below to proceed with the password reset process:\n\n"
-                + link + "\n"
-                + "If you did not request a password reset, please ignore this email.\n"
-                + "Thank you.\n";
-        return sendEmail(email, subject, body);
+        String resetPasswordMailFormat = Utils.readResetMailPattern();
+
+        String emailBody = String.format(
+                resetPasswordMailFormat,
+                userOptional.get().getFirstName() + " " + userOptional.get().getLastName(),
+                link);
+
+        return sendEmail(userOptional.get().getEmail(), "Reset password email", emailBody);
     }
 
     public void sendAnniversaryEmailToUser(User user, int noOfYears) {
