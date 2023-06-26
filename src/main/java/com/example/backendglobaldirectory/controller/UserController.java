@@ -5,6 +5,7 @@ import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.dto.SearchDTO;
 import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,12 +30,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @GetMapping("/approved")
-    private List<User> getRegisterRequestsWaitingForApprove() {
-        return null;
-    }
-
 
     @Operation(summary = "Approve a register account request from an user.",
             description = "Approve the register, so the user can log in on the platform. It's a specific action of an admin " +
@@ -79,7 +74,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> activateUser(
             @Parameter(description = "User id to make activate account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException {
+            throws UserNotFoundException, UserNotApprovedException {
         return this.userService.performAccountStatusSwitch(uid, true);
     }
 
@@ -90,7 +85,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> inactivateUser(
             @Parameter(description = "User id to make inactivate account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException {
+            throws UserNotFoundException, UserNotApprovedException {
         return this.userService.performAccountStatusSwitch(uid, false);
     }
 

@@ -47,6 +47,11 @@ public class ExceptionHandlerController {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UserNotApprovedException.class)
+    public ResponseEntity<ResponseDTO> catchUserNotApprovedException(UserNotApprovedException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO> catchGeneralException(Exception e) {
         return new ResponseEntity<>(new ResponseDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -7,11 +7,10 @@ import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
+import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
-import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.io.FileNotFoundException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,10 +54,10 @@ public class UserService implements UserDetailsService {
             user.setApproved(true);
             user.setActive(true);
             this.userRepository.save(user);
-//            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
+            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
         } else {
             this.userRepository.deleteById(user.getId());
-//            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
+            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
         }
 
         return new ResponseEntity<>(
@@ -71,10 +68,14 @@ public class UserService implements UserDetailsService {
     }
 
     public ResponseEntity<ResponseDTO> performAccountStatusSwitch(int uid, boolean active)
-            throws UserNotFoundException {
+            throws UserNotFoundException, UserNotApprovedException {
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (active ? "activation." : "inactivation.")));
+
+        if(!user.isApproved()) {
+            throw new UserNotApprovedException("You can't activate an unapproved user.");
+        }
 
         user.setActive(active);
 
@@ -147,4 +148,5 @@ public class UserService implements UserDetailsService {
         userList = this.userRepository.searchUsersData(searchData, size, offset);
         return UserProfileDTO.fromUserListToUserProfileList(userList);
     }
+
 }
