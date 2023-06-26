@@ -11,6 +11,7 @@ import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.io.FileNotFoundException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -29,16 +31,13 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private EmailSenderService emailSenderService;
-
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -54,7 +53,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (approved ? "approve." : "reject.")));
 
-        if(approved) {
+        if (approved) {
             user.setApproved(true);
             user.setActive(true);
             this.userRepository.save(user);
@@ -81,7 +80,7 @@ public class UserService implements UserDetailsService {
 
         this.userRepository.save(user);
 
-        if(!active) {
+        if (!active) {
             this.tokenService.revokeAllTokensForUser(uid);
         }
 
@@ -138,4 +137,14 @@ public class UserService implements UserDetailsService {
         return UserProfileDTO.fromUserEntity(user);
     }
 
+    public List<UserProfileDTO> getListSearch(String searchData, int offset, int size) {
+        List<User> userList;
+        if (searchData.isEmpty()) {
+            userList = this.userRepository.findAllUserSearch(size, offset);
+            return UserProfileDTO.fromUserListToUserProfileList(userList);
+        }
+
+        userList = this.userRepository.searchUsersData(searchData, size, offset);
+        return UserProfileDTO.fromUserListToUserProfileList(userList);
+    }
 }

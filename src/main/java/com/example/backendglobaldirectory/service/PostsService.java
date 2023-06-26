@@ -1,8 +1,10 @@
 package com.example.backendglobaldirectory.service;
 
+
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.CommentDTO;
 import com.example.backendglobaldirectory.dto.PostDTO;
+
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +72,7 @@ public class PostsService {
         }
 
     }
-
+  
     public List<PostDTO> getPostsFilteredBy(Integer uid)
             throws ResourceNotFoundException {
         if(uid != null) {
@@ -94,5 +97,4 @@ public class PostsService {
                 user.getPosts()
         );
     }
-
 }

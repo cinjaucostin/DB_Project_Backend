@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.dto.SearchDTO;
 import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -117,4 +118,9 @@ public class UserController {
         return this.userService.getUsersByStatus(principal, false);
     }
 
+    @GetMapping("/getSearch")
+    public List<UserProfileDTO> getListSearch(@RequestBody SearchDTO searchDTO) {
+        return this.userService.getListSearch(searchDTO.getDataSearch(),
+                searchDTO.getOffset(), searchDTO.getSize());
+    }
 }
