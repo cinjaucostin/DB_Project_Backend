@@ -65,7 +65,7 @@ public class AuthenticationService {
         User newUser = RegisterDTO.toUserEntity(registerDTO, passwordEncoder);
 
         if(newUser == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            throw new InvalidInputException("Can't register without email and password completed.");
         }
 
         Image profileImage = ImageDTO.toImageEntity(registerDTO.getImage());
