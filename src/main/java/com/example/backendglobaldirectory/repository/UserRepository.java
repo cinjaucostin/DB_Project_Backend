@@ -18,10 +18,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByActive(boolean active);
 
     @Query("SELECT u FROM User u WHERE " +
-            "(CONCAT(u.firstName, CONCAT(' ', u.lastName)) =:searchData " +
-            "or CONCAT(u.lastName, CONCAT(' ', u.firstName)) =:searchData " +
-            "or u.lastName=:searchData or u.firstName =:searchData or u.team=:searchData or u.department=:searchData " +
-            "or u.jobTitle =:searchData) and u.approved = true ORDER BY u.lastName limit :sizeLimit offset :startOffset")
+            "(LOWER(CONCAT(u.firstName, CONCAT(' ', u.lastName))) =:searchData " +
+            "or LOWER(CONCAT(u.lastName, CONCAT(' ', u.firstName))) =:searchData " +
+            "or LOWER(u.lastName)=:searchData or LOWER(u.firstName) =:searchData " +
+            "or LOWER(u.team)=:searchData or LOWER(u.department)=:searchData " +
+            "or LOWER(u.jobTitle) =:searchData or LOWER(u.firstName) like :searchData% " +
+            "or LOWER(u.lastName) like :searchData% or u.team like :searchData% " +
+            "or LOWER(u.jobTitle) like :searchData% ) " +
+            "and u.approved = true ORDER BY u.lastName limit :sizeLimit offset :startOffset")
     List<User> searchUsersData(String searchData, int sizeLimit, int startOffset);
 
     @Query("SELECT u FROM User u WHERE u.approved=true and u.role='user' " +
