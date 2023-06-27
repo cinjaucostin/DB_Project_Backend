@@ -166,7 +166,7 @@ public class UserService implements UserDetailsService {
             return UserProfileDTO.fromUserListToUserProfileList(userList);
         }
 
-        userList = this.userRepository.searchUsersData(searchData, size, offset);
+        userList = this.userRepository.searchUsersData(searchData.toLowerCase(), size, offset);
         return UserProfileDTO.fromUserListToUserProfileList(userList);
     }
 
