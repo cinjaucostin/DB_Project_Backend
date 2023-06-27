@@ -6,6 +6,7 @@ import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
 import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -19,7 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
@@ -29,12 +29,18 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private TokenService tokenService;
+
     @Autowired
     private EmailSenderService emailSenderService;
+
+    @Autowired
+    private PostsService postsService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -44,15 +50,20 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<ResponseDTO> performAccountApproveOrReject(
             int uid, boolean approved, RejectDTO rejectDTO)
-            throws UserNotFoundException, FileNotFoundException {
+            throws UserNotFoundException, DuplicateResourceException {
 
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (approved ? "approve." : "reject.")));
 
+        if (user.isApproved()) {
+            throw new DuplicateResourceException("User already approved.");
+        }
+
         if (approved) {
             user.setApproved(true);
             user.setActive(true);
+            this.postsService.generateJoiningPost(user);
             this.userRepository.save(user);
             this.emailSenderService.sendApprovedNotificationEmailToUser(user);
         } else {
@@ -68,13 +79,23 @@ public class UserService implements UserDetailsService {
     }
 
     public ResponseEntity<ResponseDTO> performAccountStatusSwitch(int uid, boolean active)
-            throws UserNotFoundException, UserNotApprovedException {
+            throws UserNotFoundException, UserNotApprovedException, DuplicateResourceException {
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (active ? "activation." : "inactivation.")));
 
-        if(!user.isApproved()) {
-            throw new UserNotApprovedException("You can't activate an unapproved user.");
+        if (!user.isApproved()) {
+            throw new UserNotApprovedException("You can't " +
+                    (active ? "activate" : "inactive") +
+                    " an unapproved user.");
+        }
+
+        if (user.isActive() && active) {
+            throw new DuplicateResourceException("User already active.");
+        }
+
+        if(!user.isActive() && !active) {
+            throw new DuplicateResourceException("User already inactive.");
         }
 
         user.setActive(active);
