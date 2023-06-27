@@ -8,10 +8,14 @@ import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import com.example.backendglobaldirectory.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +39,10 @@ public class EmailSenderService {
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    @Qualifier("applicationTaskExecutor")
+    private AsyncTaskExecutor asyncTaskExecutor;
 
     public Map<String, String> createEmail(String email)
             throws UserNotFoundException, FileNotFoundException {
@@ -71,7 +79,7 @@ public class EmailSenderService {
     public void sendAnniversaryEmailToUser(User user, int noOfYears) {
         String anniversaryMailFormat = Utils.readAnniversaryMailPattern();
 
-        if(anniversaryMailFormat == null) {
+        if (anniversaryMailFormat == null) {
             return;
         }
 
@@ -80,13 +88,17 @@ public class EmailSenderService {
                 user.getFirstName() + " " + user.getLastName(),
                 noOfYears);
 
-        sendEmail(user.getEmail(), "Anniversary email", emailBody);
+        asyncTaskExecutor.execute(() -> sendEmail(
+                user.getEmail(),
+                "Anniversary email",
+                emailBody
+        ));
     }
 
     public void sendPromotionEmailToUser(User user, String newJobTitle) {
         String promotionMailFormat = Utils.readPromotionMailPattern();
 
-        if(promotionMailFormat == null) {
+        if (promotionMailFormat == null) {
             return;
         }
 
@@ -95,13 +107,17 @@ public class EmailSenderService {
                 user.getFirstName() + " " + user.getLastName(),
                 newJobTitle);
 
-        sendEmail(user.getEmail(), "Promotion email", emailBody);
+        asyncTaskExecutor.execute(() -> sendEmail(
+                user.getEmail(),
+                "Promotion email",
+                emailBody
+        ));
     }
 
     public void sendRejectedNotificationEmailToUser(User user, RejectDTO rejectDTO) {
         String rejectMailFormat = Utils.readRejectMailPattern();
 
-        if(rejectMailFormat == null) {
+        if (rejectMailFormat == null) {
             return;
         }
 
@@ -112,13 +128,17 @@ public class EmailSenderService {
                 (rejectDTO.getDescription() == null ? "-" : rejectDTO.getDescription())
         );
 
-        sendEmail(user.getEmail(), "Register request rejected", emailBody);
+        asyncTaskExecutor.execute(() -> sendEmail(
+                user.getEmail(),
+                "Register request rejected",
+                emailBody
+        ));
     }
 
     public void sendApprovedNotificationEmailToUser(User user) {
         String approvedMailFormat = Utils.readApproveMailPattern();
 
-        if(approvedMailFormat == null) {
+        if (approvedMailFormat == null) {
             return;
         }
 
@@ -127,11 +147,16 @@ public class EmailSenderService {
                 user.getFirstName() + " " + user.getLastName()
         );
 
-        sendEmail(user.getEmail(), "Register request approved", emailBody);
+        asyncTaskExecutor.execute(() -> sendEmail(
+                user.getEmail(),
+                "Register request approved",
+                emailBody
+        ));
+
     }
 
-
-    public Map<String, String> sendEmail(String toEmail, String subject, String body){
+    @Async
+    public Map<String, String> sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);

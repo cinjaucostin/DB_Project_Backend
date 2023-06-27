@@ -3,10 +3,12 @@ package com.example.backendglobaldirectory;
 import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import com.example.backendglobaldirectory.service.EmailSenderService;
+import com.example.backendglobaldirectory.service.PostsService;
 import com.example.backendglobaldirectory.service.TokenService;
 import com.example.backendglobaldirectory.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -40,6 +42,9 @@ public class UserServiceTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private PostsService postsService;
+
     private User user;
 
     @BeforeEach
@@ -49,12 +54,11 @@ public class UserServiceTest {
         user.setApproved(false);
         user.setActive(false);
         user.setEmail("cinjau.costin@yahoo.com");
-        user.setPassword(new BCryptPasswordEncoder().encode("05082001"));
     }
 
     @Test
     public void performAccountApproveWhenTheRegisterRequestExistsTest()
-            throws UserNotFoundException, FileNotFoundException {
+            throws UserNotFoundException, FileNotFoundException, DuplicateResourceException {
         int uid = 1;
 
         when(userRepository.findById(uid)).thenReturn(Optional.of(this.user));
@@ -66,6 +70,7 @@ public class UserServiceTest {
 
         verify(userRepository).save(this.user);
         verify(emailSenderService).sendApprovedNotificationEmailToUser(this.user);
+        verify(postsService).generateJoiningPost(this.user);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK,
                 "The Http Status of the response should be 200 OK");
@@ -79,7 +84,7 @@ public class UserServiceTest {
 
     @Test
     public void performAccountRejectWhenTheRegisterRequestExistsTest()
-            throws UserNotFoundException, FileNotFoundException {
+            throws UserNotFoundException, FileNotFoundException, DuplicateResourceException {
         int uid = 1;
 
         RejectDTO rejectDTO = new RejectDTO();
@@ -126,7 +131,7 @@ public class UserServiceTest {
 
     @Test
     public void performAccountInactivationWhenTheAccountExistsTest()
-            throws UserNotFoundException, UserNotApprovedException {
+            throws UserNotFoundException, UserNotApprovedException, DuplicateResourceException {
         int uid = 1;
 
         this.user.setApproved(true);
@@ -155,7 +160,7 @@ public class UserServiceTest {
 
     @Test
     public void performAccountActivationWhenTheAccountExistsTest()
-            throws UserNotFoundException, UserNotApprovedException {
+            throws UserNotFoundException, UserNotApprovedException, DuplicateResourceException {
         int uid = 1;
 
         this.user.setApproved(true);
