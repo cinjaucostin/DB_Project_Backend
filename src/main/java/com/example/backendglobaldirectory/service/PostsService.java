@@ -39,9 +39,7 @@ public class PostsService {
     public void createPost(String email, CreatePostDTO createPostDTO) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent())   {
-            System.out.println(createPostDTO.getPostImage().getName());
             Image image = ImageDTO.toImageEntity(createPostDTO.getPostImage());
-            System.out.println(image.getName());
             imageRepository.save(image);
             Post post = new Post(PostType.MANUAL_POST, createPostDTO.getText(), image, LocalDateTime.now(), user.get());
             postRepository.save(post);

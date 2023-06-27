@@ -31,7 +31,7 @@ public class PostsController {
     }
 
     @PostMapping("/createPost")
-    public ResponseEntity<ResponseDTO> createPost(@RequestBody CreatePostDTO createPostDTO) throws UserNotFoundException {
+    public ResponseEntity<ResponseDTO> createPost(@RequestPart CreatePostDTO createPostDTO) throws UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
