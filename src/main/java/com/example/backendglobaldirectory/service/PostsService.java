@@ -72,7 +72,7 @@ public class PostsService {
 
                     this.postRepository.save(post);
 
-//                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
+                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
                 }
             }
         }
