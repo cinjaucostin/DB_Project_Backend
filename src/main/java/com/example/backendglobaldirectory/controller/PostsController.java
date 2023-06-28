@@ -2,7 +2,6 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 

@@ -1,4 +1,5 @@
 package com.example.backendglobaldirectory;
+
 import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
 import com.example.backendglobaldirectory.entities.User;
@@ -31,7 +32,7 @@ public class ResetPasswordServiceTest {
     private UserRepository userRepository;
 
     private String generateRandomPassword() {
-        return RandomStringUtils.randomAlphanumeric(15);
+        return RandomStringUtils.randomAlphanumeric(20);
     }
 
     @Test
