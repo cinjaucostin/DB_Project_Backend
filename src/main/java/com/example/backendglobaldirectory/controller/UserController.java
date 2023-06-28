@@ -2,6 +2,7 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.*;
 import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.service.UserService;
@@ -49,7 +50,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> approveRegister(
             @Parameter(description = "User id to make approve account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException, FileNotFoundException {
+            throws UserNotFoundException, FileNotFoundException, DuplicateResourceException {
         return this.userService.performAccountApproveOrReject(uid, true, null);
     }
 
@@ -61,7 +62,7 @@ public class UserController {
             @Parameter(description = "User id to make reject account for.", example = "2")
             @RequestParam int uid,
             @RequestBody RejectDTO rejectDTO)
-            throws UserNotFoundException, FileNotFoundException {
+            throws UserNotFoundException, FileNotFoundException, DuplicateResourceException {
         return this.userService.performAccountApproveOrReject(uid, false, rejectDTO);
     }
 
@@ -71,7 +72,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> activateUser(
             @Parameter(description = "User id to make activate account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException, UserNotApprovedException {
+            throws UserNotFoundException, UserNotApprovedException, DuplicateResourceException {
         return this.userService.performAccountStatusSwitch(uid, true);
     }
 
@@ -82,7 +83,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> inactivateUser(
             @Parameter(description = "User id to make inactivate account for.", example = "2")
             @RequestParam int uid)
-            throws UserNotFoundException, UserNotApprovedException {
+            throws UserNotFoundException, UserNotApprovedException, DuplicateResourceException {
         return this.userService.performAccountStatusSwitch(uid, false);
     }
 

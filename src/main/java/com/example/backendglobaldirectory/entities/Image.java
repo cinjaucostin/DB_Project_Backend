@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "profile_images")
+@Table(name = "images")
 @Schema(description = "All details about the profile image of an user.")
 @NoArgsConstructor
 @Getter

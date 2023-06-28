@@ -38,18 +38,16 @@ public class PostsService {
 
     public void createPost(String email, CreatePostDTO createPostDTO) {
         Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent())   {
-            System.out.println(createPostDTO.getPostImage().getName());
+        if (user.isPresent()) {
             Image image = ImageDTO.toImageEntity(createPostDTO.getPostImage());
-            System.out.println(image.getName());
-            imageRepository.save(image);
+
             Post post = new Post(PostType.MANUAL_POST, createPostDTO.getText(), image, LocalDateTime.now(), user.get());
             postRepository.save(post);
         }
     }
 
     // Se executa in fiecare zi la 12:01 AM(ora Romaniei)
-    @Scheduled(cron = "0 28 11 * * *", zone = "Europe/Bucharest")
+    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Bucharest")
     public void generateAnniversaryPosts() throws FileNotFoundException {
         List<User> users = this.userRepository.findAll();
 
@@ -72,13 +70,24 @@ public class PostsService {
 
                     this.postRepository.save(post);
 
-//                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
+                    this.emailSenderService.sendAnniversaryEmailToUser(user, noOfYearsInCompany);
                 }
             }
-
         }
 
     }
+
+    public void generateJoiningPost(User user) {
+        Post post = new Post(
+                PostType.JOINING_POST,
+                "Welcome to the team " + user.getFirstName() + " " + user.getLastName(),
+                LocalDateTime.now(),
+                user
+        );
+
+        this.postRepository.save(post);
+    }
+
   
     public List<PostDTO> getPostsFilteredBy(Integer uid)
             throws ResourceNotFoundException {
@@ -104,4 +113,5 @@ public class PostsService {
                 user.getPosts()
         );
     }
+
 }
