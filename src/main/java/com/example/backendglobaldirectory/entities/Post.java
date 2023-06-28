@@ -33,8 +33,8 @@ public class Post {
     @Schema(description = "The timestamp when it was created.")
     private LocalDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "image_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_image", referencedColumnName = "id")
     @JsonIgnore
     @Schema(description = "The image associated with the post.")
     private Image image;
