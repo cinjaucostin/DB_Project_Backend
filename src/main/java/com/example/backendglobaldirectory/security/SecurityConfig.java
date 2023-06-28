@@ -57,18 +57,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/sendEmail")
                         .permitAll()
-                        .requestMatchers( "/reset", "/update", "/createPost")
-                        .hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/approve", "/api/users/reject",
                                 "/api/users/activate", "/api/users/inactivate")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/users/registerRequests", "/api/users/inactive")
                         .hasAuthority("ADMIN")
-                        .requestMatchers("/api/posts", "/api/users/active", "/api/reactions/comments")
-                        .hasAnyAuthority("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.POST, "/api/auth/logout")
-                        .authenticated()
-                        .requestMatchers("/api/users/**", "/api/reactions/**")
+                        .requestMatchers( "/reset", "/update", "/api/auth/logout", "/api/posts/**", "/api/users/**", "/api/reactions/**",
+                                "/api/reactions/**", "/api/reactions/**")
                         .authenticated()
                         .requestMatchers( "/reset", "/update")
                         .permitAll()

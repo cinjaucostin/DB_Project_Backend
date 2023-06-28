@@ -4,18 +4,29 @@ import com.example.backendglobaldirectory.entities.Comment;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.utils.Utils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
-public class CommentDTO {
+public class CommentDTO implements Comparable<CommentDTO> {
+
     private int id;
+
     private int userId;
+
     private int postId;
+
     private String userFullName;
+
     private String text;
+
+    @JsonIgnore
+    private long intervalInMinutes;
+
     private String timePassed;
 
     public static CommentDTO fromEntityToDTO(Comment comment) {
@@ -31,7 +42,9 @@ public class CommentDTO {
                 " " +
                 commentUser.getLastName()
         );
-        commentDTO.setTimePassed(Utils.getPeriodOfTimeFrom(comment.getTimestamp()));
+        commentDTO.setIntervalInMinutes(Utils.getPeriodOfTimeInMinutesFrom(comment.getTimestamp()));
+        commentDTO.setTimePassed(Utils.getPeriodOfTimeAsString(commentDTO.getIntervalInMinutes()));
+
         return commentDTO;
     }
 
@@ -42,7 +55,14 @@ public class CommentDTO {
             commentDTOS.add(fromEntityToDTO(comment));
         });
 
+        Collections.sort(commentDTOS);
+
         return commentDTOS;
+    }
+
+    @Override
+    public int compareTo(CommentDTO o) {
+        return Long.compare(this.intervalInMinutes, o.intervalInMinutes);
     }
 
 }

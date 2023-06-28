@@ -3,6 +3,7 @@ package com.example.backendglobaldirectory.security;
 import com.example.backendglobaldirectory.entities.Token;
 import com.example.backendglobaldirectory.repository.TokenRepository;
 import com.example.backendglobaldirectory.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -35,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean checkIfTokenIsRevokedOrExpired(String jwtToken) {
         Token token = this.tokenRepository.findByToken(jwtToken).orElse(null);
 
-        if(token == null) {
+        if (token == null) {
             return false;
         }
 
@@ -51,16 +53,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwtToken;
         String email;
 
-        if(authHeader == null || !authHeader.startsWith(AUTH_HEADER_PREFIX)) {
+        if (authHeader == null || !authHeader.startsWith(AUTH_HEADER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         jwtToken = authHeader.substring(AUTH_HEADER_PREFIX.length());
 
-        if(jwtService.isTokenExpired(jwtToken)) {
+
+        try {
+            boolean expired = jwtService.isTokenExpired(jwtToken);
+
+            if (expired) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+        } catch (ExpiredJwtException e) {
             Token token = this.tokenRepository.findByToken(jwtToken).orElse(null);
-            if(token != null) {
+
+            if (token != null) {
                 token.setExpired(true);
                 this.tokenRepository.save(token);
             }
@@ -71,17 +82,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         email = jwtService.extractUsername(jwtToken);
 
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userService.loadUserByUsername(email);
 
-            if(!userDetails.isEnabled()  || !userDetails.isAccountNonLocked()) {
+            if (!userDetails.isEnabled() || !userDetails.isAccountNonLocked()) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
             boolean tokenIsNotRevokedOrExpired = checkIfTokenIsRevokedOrExpired(jwtToken);
 
-            if(jwtService.isTokenValidForUser(jwtToken, userDetails) && tokenIsNotRevokedOrExpired) {
+            if (jwtService.isTokenValidForUser(jwtToken, userDetails) && tokenIsNotRevokedOrExpired) {
                 UsernamePasswordAuthenticationToken authContextToken =
                         new UsernamePasswordAuthenticationToken(userDetails,
                                 null,
@@ -97,7 +108,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // Trimitem la urmatorul filtru
         filterChain.doFilter(request, response);
     }
 

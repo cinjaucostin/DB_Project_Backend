@@ -2,6 +2,8 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.exception.AccessAnotherUserResourcesException;
+import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -29,7 +32,14 @@ public class PostsController {
         return this.postsService.getPostsFilteredBy(uid);
     }
 
-    @PostMapping
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO> deletePost(@PathVariable int id,
+                                                  Principal principal)
+            throws ResourceNotFoundException, AccessAnotherUserResourcesException {
+        return this.postsService.deletePostById(id, principal);
+    }
+
+    @PostMapping("/new")
     public ResponseEntity<ResponseDTO> createPost(@RequestBody CreatePostDTO createPostDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
