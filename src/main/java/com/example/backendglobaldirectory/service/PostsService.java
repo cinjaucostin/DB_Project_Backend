@@ -3,19 +3,23 @@ package com.example.backendglobaldirectory.service;
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ImageDTO;
 import com.example.backendglobaldirectory.dto.PostDTO;
-import com.example.backendglobaldirectory.entities.Image;
-import com.example.backendglobaldirectory.entities.Post;
-import com.example.backendglobaldirectory.entities.PostType;
-import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.entities.*;
+import com.example.backendglobaldirectory.exception.AccessAnotherUserResourcesException;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 import com.example.backendglobaldirectory.repository.ImageRepository;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
+import java.lang.module.ResolutionException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +92,26 @@ public class PostsService {
         this.postRepository.save(post);
     }
 
+    public ResponseEntity<ResponseDTO> deletePostById(int id,
+                                                      Principal principal)
+            throws ResourceNotFoundException, AccessAnotherUserResourcesException {
+        User user = this.userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        Post post = this.postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found."));
+
+        if(post.getUser().getId() != user.getId() &&
+            !user.getRole().equals(Roles.ADMIN)) {
+            throw new AccessAnotherUserResourcesException("You can't delete the post of " +
+                    "another user if you are not admin.");
+        }
+
+        this.postRepository.delete(post);
+
+        return new ResponseEntity<>(new ResponseDTO("Post removed successfully"),
+                HttpStatus.OK);
+    }
   
     public List<PostDTO> getPostsFilteredBy(Integer uid)
             throws ResourceNotFoundException {

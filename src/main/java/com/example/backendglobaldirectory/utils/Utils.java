@@ -16,7 +16,8 @@ public class Utils {
     private static final String PROMOTION_EMAIL_PATTERN_PATH = "src/main/resources/promotion_mail_pattern.txt";
     public static final String REJECT_EMAIL_PATTERN_PATH = "src/main/resources/reject_mail_pattern.txt";
     public static final String APPROVE_EMAIL_PATTERN_PATH = "src/main/resources/approve_mail_pattern.txt";
-    private static final String RESET_PASSWORD_EMAIL_PATTERN_PATH = "src/main/resources/reset_password_mail_pattern.txt";;
+    private static final String RESET_PASSWORD_EMAIL_PATTERN_PATH = "src/main/resources/reset_password_mail_pattern.txt";
+    ;
 
     public static Optional<LocalDateTime> convertDateStringToLocalDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -28,7 +29,7 @@ public class Utils {
 
         LocalDateTime currentTime = LocalDateTime.now();
 
-        if(dateTime.isAfter(currentTime)) {
+        if (dateTime.isAfter(currentTime)) {
             return Optional.empty();
         }
 
@@ -68,29 +69,28 @@ public class Utils {
         return readMailPattern(APPROVE_EMAIL_PATTERN_PATH);
     }
 
-    public static String readResetMailPattern() throws FileNotFoundException {
-        return readMailPattern(RESET_PASSWORD_EMAIL_PATTERN_PATH);
+    public static String readResetMailPattern() { return readMailPattern(RESET_PASSWORD_EMAIL_PATTERN_PATH); }
+
+    public static long getPeriodOfTimeInMinutesFrom(LocalDateTime initial) {
+        return Duration.between(initial, LocalDateTime.now()).toMinutes();
     }
 
-    public static String getPeriodOfTimeFrom(LocalDateTime initial) {
-        Duration duration = Duration.between(
-                initial,
-                LocalDateTime.now()
-        );
-
+    public static String getPeriodOfTimeAsString(long minutes) {
         StringBuilder periodStringBuilder = new StringBuilder();
 
-        long minutes = duration.toMinutes();
+        Duration duration = Duration.ofMinutes(minutes);
 
-        if(minutes < 60) {
+        if (minutes == 0) {
+            periodStringBuilder.append("Just now");
+        } else if (minutes < 60) {
             periodStringBuilder.append(minutes);
-            periodStringBuilder.append(" m");
-        } else if(minutes >= 60 && minutes <= 1440) {
+            periodStringBuilder.append(" m ago");
+        } else if (minutes <= 1440) {
             periodStringBuilder.append(duration.toHours());
-            periodStringBuilder.append(" h");
-        } else if(minutes > 1440) {
+            periodStringBuilder.append(" h ago");
+        } else {
             periodStringBuilder.append(duration.toDays());
-            periodStringBuilder.append(" d");
+            periodStringBuilder.append(" d ago");
         }
 
         return periodStringBuilder.toString();
