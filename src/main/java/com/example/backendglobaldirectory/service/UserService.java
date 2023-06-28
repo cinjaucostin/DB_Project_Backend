@@ -1,9 +1,6 @@
 package com.example.backendglobaldirectory.service;
 
-import com.example.backendglobaldirectory.dto.ForgotPasswordDTO;
-import com.example.backendglobaldirectory.dto.RejectDTO;
-import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.dto.UserProfileDTO;
+import com.example.backendglobaldirectory.dto.*;
 import com.example.backendglobaldirectory.entities.Roles;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.ThePasswordsDoNotMatchException;
@@ -73,7 +70,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("No user found with the given uid. " +
                         "Can't perform the " + (active ? "activation." : "inactivation.")));
 
-        if(!user.isApproved()) {
+        if (!user.isApproved()) {
             throw new UserNotApprovedException("You can't activate an unapproved user.");
         }
 
@@ -138,15 +135,29 @@ public class UserService implements UserDetailsService {
         return UserProfileDTO.fromUserEntity(user);
     }
 
-    public List<UserProfileDTO> getListSearch(String searchData, int offset, int size) {
+    public ResponseSearchDTO getListSearch(String searchData, int offset, int size) {
         List<User> userList;
+        int sizeDataSearch;
+        int sizeCalc;
+
         if (searchData.isEmpty()) {
+            sizeDataSearch = this.userRepository.countAll();
             userList = this.userRepository.findAllUserSearch(size, offset);
-            return UserProfileDTO.fromUserListToUserProfileList(userList);
+            sizeCalc = sizeDataSearch / size;
+            if (sizeDataSearch % size != 0) {
+                sizeCalc += 1;
+            }
+            return new ResponseSearchDTO(sizeDataSearch, sizeCalc, UserProfileDTO.fromUserListToUserProfileList(userList));
         }
 
+        sizeDataSearch = this.userRepository.countAllSearch(searchData.toLowerCase());
         userList = this.userRepository.searchUsersData(searchData.toLowerCase(), size, offset);
-        return UserProfileDTO.fromUserListToUserProfileList(userList);
+        sizeCalc = sizeDataSearch / size;
+        if (sizeDataSearch % size != 0) {
+            sizeCalc += 1;
+        }
+
+        return new ResponseSearchDTO(sizeDataSearch, sizeCalc, UserProfileDTO.fromUserListToUserProfileList(userList));
     }
 
 }
