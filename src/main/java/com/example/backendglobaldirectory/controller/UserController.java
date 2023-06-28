@@ -115,7 +115,7 @@ public class UserController {
     }
 
     @GetMapping("/getSearch")
-    public List<UserProfileDTO> getListSearch(@RequestBody SearchDTO searchDTO) {
+    public List<UserProfileDTO> getListSearch(@RequestParam(name = "searchDTO") SearchDTO searchDTO) {
         return this.userService.getListSearch(searchDTO.getDataSearch(),
                 searchDTO.getOffset(), searchDTO.getSize());
     }
