@@ -2,10 +2,8 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.RejectDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
-import com.example.backendglobaldirectory.dto.SearchDTO;
 import com.example.backendglobaldirectory.dto.UserProfileDTO;
 import com.example.backendglobaldirectory.dto.*;
-import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.DuplicateResourceException;
 import com.example.backendglobaldirectory.exception.UserNotApprovedException;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
@@ -122,4 +120,5 @@ public class UserController {
         return this.userService.getListSearch(dataSearch,
                 offset, size);
     }
+
 }

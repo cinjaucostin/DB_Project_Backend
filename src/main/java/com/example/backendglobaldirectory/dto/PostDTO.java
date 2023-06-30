@@ -1,9 +1,6 @@
 package com.example.backendglobaldirectory.dto;
 
-import com.example.backendglobaldirectory.entities.Comment;
-import com.example.backendglobaldirectory.entities.Like;
-import com.example.backendglobaldirectory.entities.Post;
-import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.entities.*;
 import com.example.backendglobaldirectory.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -23,6 +20,8 @@ public class PostDTO implements Comparable<PostDTO> {
 
     private String text;
 
+    private ImageDTO userProfileImage;
+
     @JsonIgnore
     private long intervalInMinutes;
 
@@ -40,6 +39,7 @@ public class PostDTO implements Comparable<PostDTO> {
 
     public static PostDTO fromEntityToDTO(Post post) {
         User postUser = post.getUser();
+        Image userProfileImage = postUser.getProfileImage();
         List<Comment> comments = post.getComments();
         List<Like> likes = post.getLikes();
 
@@ -49,6 +49,7 @@ public class PostDTO implements Comparable<PostDTO> {
         postDTO.userFullName = postUser.getFirstName() + " " + postUser.getLastName();
         postDTO.text = post.getText();
         postDTO.intervalInMinutes = Utils.getPeriodOfTimeInMinutesFrom(post.getTimestamp());
+        postDTO.userProfileImage = userProfileImage == null ? null : ImageDTO.fromEntity(userProfileImage);
         postDTO.timePeriod = Utils.getPeriodOfTimeAsString(postDTO.intervalInMinutes);
         postDTO.type = post.getType().name();
         postDTO.postImage = post.getImage() == null ? null : ImageDTO.fromEntity(post.getImage());
