@@ -1,11 +1,14 @@
 package com.example.backendglobaldirectory.service;
 
+import com.example.backendglobaldirectory.dto.ImageDTO;
 import com.example.backendglobaldirectory.dto.ProfileDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.exception.UserNotFoundException;
+import com.example.backendglobaldirectory.repository.ImageRepository;
 import com.example.backendglobaldirectory.repository.PostsRepository;
 import com.example.backendglobaldirectory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,9 @@ public class UpdateProfileService {
 
     @Autowired
     private EmailSenderService emailSenderService;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     public ResponseEntity<?> updateProfile (ProfileDTO profileDTO, String email) throws UserNotFoundException, FileNotFoundException {
 
@@ -87,6 +93,19 @@ public class UpdateProfileService {
 
         if (!Objects.equals(profileDTO.getHobbies(), user.getHobbies()) && profileDTO.getHobbies() != null) {
             user.setHobbies(profileDTO.getHobbies());
+        }
+
+        if(profileDTO.getProfileImage() != null) {
+            Image oldImage = user.getProfileImage();
+
+            user.setProfileImage(null);
+
+            if(oldImage != null) {
+                this.imageRepository.deleteById(oldImage.getId());
+            }
+
+            Image newImage = ImageDTO.toImageEntity(profileDTO.getProfileImage());
+            user.setProfileImage(newImage);
         }
 
         userRepository.save(user);

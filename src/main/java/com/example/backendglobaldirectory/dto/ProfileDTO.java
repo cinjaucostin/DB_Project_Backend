@@ -10,6 +10,8 @@ public class ProfileDTO {
 
     private String lastName;
 
+    private ImageDTO profileImage;
+
     private String jobTitle;
 
     private String team;
