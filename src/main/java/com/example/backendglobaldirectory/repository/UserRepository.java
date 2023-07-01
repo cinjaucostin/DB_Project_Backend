@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "or LOWER(u.team)=:searchData or LOWER(u.department)=:searchData " +
             "or LOWER(u.jobTitle) =:searchData or LOWER(u.firstName) like :searchData% " +
             "or LOWER(u.lastName) like :searchData% or u.team like :searchData% " +
-            "or LOWER(u.jobTitle) like :searchData% ) " +
+            "or LOWER(u.jobTitle) like :searchData% or u.hobbies like CONCAT('%',:searchData,'%') ) " +
             "and u.approved = true and u.role='user' " +
             "ORDER BY u.lastName limit :sizeLimit offset :startOffset")
     List<User> searchUsersData(String searchData, int sizeLimit, int startOffset);
@@ -40,7 +40,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "or LOWER(u.team)=:searchData or LOWER(u.department)=:searchData " +
             "or LOWER(u.jobTitle) =:searchData or LOWER(u.firstName) like :searchData% " +
             "or LOWER(u.lastName) like :searchData% or u.team like :searchData% " +
-            "or LOWER(u.jobTitle) like :searchData% ) " +
+            "or LOWER(u.jobTitle) like :searchData% or u.hobbies like CONCAT('%',:searchData,'%') ) " +
             "and u.approved = true and u.role='user'")
     int countAllSearch(String searchData);
 
