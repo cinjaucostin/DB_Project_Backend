@@ -1,6 +1,7 @@
 package com.example.backendglobaldirectory.dto;
 
 import com.example.backendglobaldirectory.entities.Comment;
+import com.example.backendglobaldirectory.entities.Image;
 import com.example.backendglobaldirectory.entities.Post;
 import com.example.backendglobaldirectory.entities.User;
 import com.example.backendglobaldirectory.utils.Utils;
@@ -22,6 +23,8 @@ public class CommentDTO implements Comparable<CommentDTO> {
 
     private String userFullName;
 
+    private ImageDTO userProfileImage;
+
     private String text;
 
     @JsonIgnore
@@ -31,12 +34,14 @@ public class CommentDTO implements Comparable<CommentDTO> {
 
     public static CommentDTO fromEntityToDTO(Comment comment) {
         User commentUser = comment.getUser();
+        Image userProfileImage = commentUser.getProfileImage();
         Post commentPost = comment.getPost();
 
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(comment.getId());
         commentDTO.setUserId(commentUser.getId());
         commentDTO.setPostId(commentPost.getId());
+        commentDTO.userProfileImage = userProfileImage == null ? null : ImageDTO.fromEntity(userProfileImage);
         commentDTO.setText(comment.getText());
         commentDTO.setUserFullName(commentUser.getFirstName() +
                 " " +
