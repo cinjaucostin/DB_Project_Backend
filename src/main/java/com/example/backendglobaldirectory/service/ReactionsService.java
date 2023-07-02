@@ -146,6 +146,10 @@ public class ReactionsService {
 
     public List<LikeDTO> getLikesFilteredBy(Integer pid, Integer uid, Principal principal)
             throws ResourceNotFoundException, AccessAnotherUserResourcesException {
+        if(pid != null && uid != null) {
+            return getLikesByUserIdAndPostId(uid, pid);
+        }
+
         if(pid != null) {
             return getLikesByPostId(pid);
         }
@@ -213,6 +217,19 @@ public class ReactionsService {
         return LikeDTO.fromEntityListToDTOList(
                 user.getLikes()
         );
+    }
+
+    public List<LikeDTO> getLikesByUserIdAndPostId(int uid, int pid)
+            throws ResourceNotFoundException {
+        Post post = this.postsRepository.findById(pid)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
+
+        List<Like> likes = post.getLikes()
+                .stream()
+                .filter(like -> like.getUser().getId() == uid)
+                .toList();
+
+        return LikeDTO.fromEntityListToDTOList(likes);
     }
 
     public ResponseEntity<PostStatsDTO> countStatsForPost(Integer pid, Integer uid)
