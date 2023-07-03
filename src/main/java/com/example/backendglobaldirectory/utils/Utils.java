@@ -84,13 +84,13 @@ public class Utils {
             periodStringBuilder.append("Just now");
         } else if (minutes < 60) {
             periodStringBuilder.append(minutes);
-            periodStringBuilder.append(" m ago");
+            periodStringBuilder.append("m ago");
         } else if (minutes <= 1440) {
             periodStringBuilder.append(duration.toHours());
-            periodStringBuilder.append(" h ago");
+            periodStringBuilder.append("h ago");
         } else {
             periodStringBuilder.append(duration.toDays());
-            periodStringBuilder.append(" d ago");
+            periodStringBuilder.append("d ago");
         }
 
         return periodStringBuilder.toString();

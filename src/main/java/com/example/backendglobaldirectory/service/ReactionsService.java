@@ -248,6 +248,14 @@ public class ReactionsService {
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
+    public void checkIfUserLikedPosts(List<PostDTO> posts, int uidWhoMadeReq)
+            throws ResourceNotFoundException {
+        for(PostDTO post : posts) {
+            boolean userLikedPost = checkIfUserLikedPost(post.getPostId(), uidWhoMadeReq);
+            post.setLiked(userLikedPost);
+        }
+    }
+
     public boolean checkIfUserLikedPost(int pid, int uid)
             throws ResourceNotFoundException {
         Post post = this.postsRepository.findById(pid)

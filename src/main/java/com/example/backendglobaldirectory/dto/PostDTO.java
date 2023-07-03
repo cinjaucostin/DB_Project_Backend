@@ -25,6 +25,8 @@ public class PostDTO implements Comparable<PostDTO> {
     @JsonIgnore
     private long intervalInMinutes;
 
+    private boolean liked;
+
     private String timePeriod;
 
     private String type;

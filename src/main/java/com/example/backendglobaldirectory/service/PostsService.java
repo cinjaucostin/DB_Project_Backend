@@ -14,11 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
-import java.lang.module.ResolutionException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +30,9 @@ public class PostsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ReactionsService reactionsService;
 
     @Autowired
     private EmailSenderService emailSenderService;
@@ -112,29 +113,45 @@ public class PostsService {
                 HttpStatus.OK);
     }
   
-    public List<PostDTO> getPostsFilteredBy(Integer uid)
+    public List<PostDTO> getPostsFilteredBy(Integer uid, Principal principal)
             throws ResourceNotFoundException {
+
+        User user = this.userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        int uidWhoMadeTheReq = user.getId();
+
         if(uid != null) {
-            return getPostsByUserId(uid);
+            return getPostsByUserId(uid, uidWhoMadeTheReq);
         }
 
-        return getAllPosts();
+        return getAllPosts(uidWhoMadeTheReq);
     }
 
-    private List<PostDTO> getAllPosts() {
-        return PostDTO.fromEntityListToDTOList(
+    private List<PostDTO> getAllPosts(int uidWhoMadeTheReq)
+            throws ResourceNotFoundException {
+
+        List<PostDTO> posts = PostDTO.fromEntityListToDTOList(
                 this.postRepository.findAll()
         );
+
+        reactionsService.checkIfUserLikedPosts(posts, uidWhoMadeTheReq);
+
+        return posts;
     }
 
-    private List<PostDTO> getPostsByUserId(Integer uid)
+    private List<PostDTO> getPostsByUserId(int uid, int uidWhoMadeTheReq)
             throws ResourceNotFoundException {
         User user = this.userRepository.findById(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
-        return PostDTO.fromEntityListToDTOList(
+        List<PostDTO> posts = PostDTO.fromEntityListToDTOList(
                 user.getPosts()
         );
+
+        reactionsService.checkIfUserLikedPosts(posts, uidWhoMadeTheReq);
+
+        return posts;
     }
 
 }
