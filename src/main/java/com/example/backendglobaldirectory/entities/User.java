@@ -65,12 +65,15 @@ public class User implements UserDetails {
     private Image profileImage;
 
     @Schema(description = "A list with some important skills.")
+    @Column(length = 1000)
     private List<String> skills;
 
     @Schema(description = "Some details about each previous experience.")
+    @Column(length = 1000)
     private List<String> previousExperience;
 
     @Schema(description = "List of hobbies.")
+    @Column(length = 1000)
     private List<String> hobbies;
 
     @Schema(description = "The team of user.")
