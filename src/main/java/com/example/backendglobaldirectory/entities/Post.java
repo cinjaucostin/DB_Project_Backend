@@ -28,6 +28,7 @@ public class Post {
     private PostType type;
 
     @Schema(description = "The details about the post, like a description.")
+    @Column(length = 1000)
     private String text;
 
     @Schema(description = "The timestamp when it was created.")
