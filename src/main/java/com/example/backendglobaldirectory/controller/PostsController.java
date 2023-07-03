@@ -27,9 +27,10 @@ public class PostsController {
     private PostsService postsService;
 
     @GetMapping
-    public List<PostDTO> getPosts(@RequestParam(required = false) Integer uid)
+    public List<PostDTO> getPosts(@RequestParam(required = false) Integer uid,
+                                  Principal principal)
             throws ResourceNotFoundException {
-        return this.postsService.getPostsFilteredBy(uid);
+        return this.postsService.getPostsFilteredBy(uid, principal);
     }
 
     @DeleteMapping("/{id}")
