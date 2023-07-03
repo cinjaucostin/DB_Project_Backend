@@ -2,8 +2,8 @@ package com.example.backendglobaldirectory.controller;
 
 import com.example.backendglobaldirectory.dto.CreatePostDTO;
 import com.example.backendglobaldirectory.dto.ResponseDTO;
+import com.example.backendglobaldirectory.entities.PostType;
 import com.example.backendglobaldirectory.exception.AccessAnotherUserResourcesException;
-import com.example.backendglobaldirectory.exception.UserNotFoundException;
 import com.example.backendglobaldirectory.dto.PostDTO;
 import com.example.backendglobaldirectory.exception.ResourceNotFoundException;
 
@@ -28,9 +28,10 @@ public class PostsController {
 
     @GetMapping
     public List<PostDTO> getPosts(@RequestParam(required = false) Integer uid,
+                                  @RequestParam(required = false, name = "post_type") String type,
                                   Principal principal)
             throws ResourceNotFoundException {
-        return this.postsService.getPostsFilteredBy(uid, principal);
+        return this.postsService.getPostsFilteredBy(uid, type, principal);
     }
 
     @DeleteMapping("/{id}")

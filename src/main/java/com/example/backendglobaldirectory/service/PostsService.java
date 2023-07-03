@@ -113,7 +113,7 @@ public class PostsService {
                 HttpStatus.OK);
     }
   
-    public List<PostDTO> getPostsFilteredBy(Integer uid, Principal principal)
+    public List<PostDTO> getPostsFilteredBy(Integer uid, String type, Principal principal)
             throws ResourceNotFoundException {
 
         User user = this.userRepository.findByEmail(principal.getName())
@@ -121,11 +121,34 @@ public class PostsService {
 
         int uidWhoMadeTheReq = user.getId();
 
+        if(type != null) {
+            return getPostsByType(type, uidWhoMadeTheReq);
+        }
+
         if(uid != null) {
             return getPostsByUserId(uid, uidWhoMadeTheReq);
         }
 
         return getAllPosts(uidWhoMadeTheReq);
+    }
+
+    private List<PostDTO> getPostsByType(String type, int uidWhoMadeTheReq)
+            throws ResourceNotFoundException {
+        List<PostDTO> posts;
+
+        switch (type) {
+            case "manual" -> posts = PostDTO.fromEntityListToDTOList(this.postRepository.findByType(PostType.MANUAL_POST));
+            case "anniversary" -> posts = PostDTO.fromEntityListToDTOList(this.postRepository.findByType(PostType.ANNIVERSARY_POST));
+            case "joining" -> posts = PostDTO.fromEntityListToDTOList(this.postRepository.findByType(PostType.JOINING_POST));
+            case "promotion" -> posts = PostDTO.fromEntityListToDTOList(this.postRepository.findByType(PostType.PROMOTION_POST));
+            default -> posts = null;
+        };
+
+        if(posts != null) {
+            reactionsService.checkIfUserLikedPosts(posts, uidWhoMadeTheReq);
+        }
+
+        return posts;
     }
 
     private List<PostDTO> getAllPosts(int uidWhoMadeTheReq)
