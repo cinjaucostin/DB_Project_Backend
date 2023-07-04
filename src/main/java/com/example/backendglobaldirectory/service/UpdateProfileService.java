@@ -67,7 +67,7 @@ public class UpdateProfileService {
 
             Post post = new Post(
                     PostType.PROMOTION_POST,
-                    "Congratulation for promotion to " + profileDTO.getJobTitle(),
+                    "I was promoted to the position of " + profileDTO.getJobTitle() + ".",
                     LocalDateTime.now(),
                     user
             );

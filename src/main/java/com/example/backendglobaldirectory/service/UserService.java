@@ -62,10 +62,10 @@ public class UserService implements UserDetailsService {
             user.setActive(true);
             this.postsService.generateJoiningPost(user);
             this.userRepository.save(user);
-//            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
+            this.emailSenderService.sendApprovedNotificationEmailToUser(user);
         } else {
             this.userRepository.deleteById(user.getId());
-//            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
+            this.emailSenderService.sendRejectedNotificationEmailToUser(user, rejectDTO);
         }
 
         return new ResponseEntity<>(
