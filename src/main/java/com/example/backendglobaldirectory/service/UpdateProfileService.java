@@ -58,7 +58,9 @@ public class UpdateProfileService {
             user.setLastName(profileDTO.getLastName());
         }
 
-        if (!Objects.equals(profileDTO.getJobTitle(), user.getJobTitle())  && profileDTO.getJobTitle() != null) {
+        if (!Objects.equals(profileDTO.getJobTitle(), user.getJobTitle())
+                && profileDTO.getJobTitle() != null
+                && profileDTO.getJobTitle().length() != 0) {
             user.setJobTitle(profileDTO.getJobTitle());
 
             String newJobTitle = profileDTO.getJobTitle();
