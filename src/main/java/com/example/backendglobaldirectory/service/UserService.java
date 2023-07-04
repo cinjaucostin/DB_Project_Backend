@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -147,7 +148,8 @@ public class UserService implements UserDetailsService {
         return UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByActive(active))
                 .stream().filter((userProfileDTO -> !Objects.equals(userProfileDTO.getRole(), Roles.ADMIN.name())
                         && !Objects.equals(userProfileDTO.getEmail(), principal.getName())
-                        && userProfileDTO.isApproved())).toList();
+                        && userProfileDTO.isApproved()))
+                .collect(Collectors.toList());
     }
 
     public UserProfileDTO getUserProfileById(int id) {
