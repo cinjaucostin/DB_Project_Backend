@@ -1,9 +1,6 @@
 package com.example.backendglobaldirectory.dto;
 
-import com.example.backendglobaldirectory.entities.Comment;
-import com.example.backendglobaldirectory.entities.Like;
-import com.example.backendglobaldirectory.entities.Post;
-import com.example.backendglobaldirectory.entities.User;
+import com.example.backendglobaldirectory.entities.*;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -15,14 +12,23 @@ public class LikeDTO {
     private int userId;
     private int postId;
     private String userFullName;
+    private ImageDTO userProfileImage;
 
     public static LikeDTO fromEntityToDTO(Like like) {
         User likeUser = like.getUser();
         Post likePost = like.getPost();
 
+        Image profileImage = likeUser.getProfileImage();
+
+        ImageDTO profileImageDTO =
+                profileImage == null ?
+                null :
+                ImageDTO.fromEntity(likeUser.getProfileImage());
+
         LikeDTO likeDTO = new LikeDTO();
         likeDTO.setId(like.getId());
         likeDTO.setPostId(likePost.getId());
+        likeDTO.setUserProfileImage(profileImageDTO);
         likeDTO.setUserId(likeUser.getId());
         likeDTO.setUserFullName(likeUser.getFirstName() +
                 " " +
