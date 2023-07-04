@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -145,11 +146,13 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserProfileDTO> getUsersByStatus(Principal principal, boolean active) {
-        return UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByActive(active))
+        List<UserProfileDTO> profiles = UserProfileDTO.fromUserListToUserProfileList(this.userRepository.findByActive(active))
                 .stream().filter((userProfileDTO -> !Objects.equals(userProfileDTO.getRole(), Roles.ADMIN.name())
                         && !Objects.equals(userProfileDTO.getEmail(), principal.getName())
                         && userProfileDTO.isApproved()))
                 .collect(Collectors.toList());
+        Collections.reverse(profiles);
+        return profiles;
     }
 
     public UserProfileDTO getUserProfileById(int id) {
