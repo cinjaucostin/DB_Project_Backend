@@ -84,7 +84,7 @@ public class PostsService {
     public void generateJoiningPost(User user) {
         Post post = new Post(
                 PostType.JOINING_POST,
-                "Welcome to the team, " + user.getFirstName() + " " + user.getLastName(),
+                "Hello, I'm your new colleague and I can't wait to work with you.",
                 LocalDateTime.now(),
                 user
         );
