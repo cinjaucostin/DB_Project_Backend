@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReactionsService {
@@ -227,7 +228,7 @@ public class ReactionsService {
         List<Like> likes = post.getLikes()
                 .stream()
                 .filter(like -> like.getUser().getId() == uid)
-                .toList();
+                .collect(Collectors.toList());
 
         return LikeDTO.fromEntityListToDTOList(likes);
     }
@@ -264,7 +265,7 @@ public class ReactionsService {
         return post.getLikes()
                 .stream()
                 .filter(like -> like.getUser().getId() == uid)
-                .toList()
+                .collect(Collectors.toList())
                 .size() == 1;
     }
 
